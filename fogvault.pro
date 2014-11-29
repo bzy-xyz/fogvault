@@ -7,3 +7,13 @@ OTHER_FILES += \
     LICENSE
 
 QMAKE_MAC_SDK = macosx10.9
+
+HEADERS += \
+    crypto/CryptoCommon.hpp \
+    crypto/File.hpp \
+    crypto/UserKey.hpp
+
+SOURCES += \
+    crypto/CryptoCommon.cpp \
+    crypto/File.cpp \
+    crypto/UserKey.cpp
