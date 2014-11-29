@@ -578,6 +578,19 @@ struct fv_file_control_t
     fv_file_state_t state;
 };
 
+void FVFile::__verify(FVUserPublicKey * owner_key)
+{
+    this->md->verify();
+    if(owner_key != NULL)
+    {
+        this->md->kt.verify(*owner_key);
+    }
+    else
+    {
+        this->md->kt.verify();
+    }
+}
+
 
 FVFile::FVFile(QFile & pt_file, FVUserKeyPair & key, const FVUserPublicKey * owner_key)
     : key(key)
@@ -616,15 +629,7 @@ FVFile::FVFile(QFile & pt_file, FVUserKeyPair & key, const FVUserPublicKey * own
         this->md->read_from_stream(st);
 
         // then check signature and key table provenance
-        this->md->verify();
-        if(owner_key != NULL)
-        {
-            this->md->kt.verify(*owner_key);
-        }
-        else
-        {
-            this->md->kt.verify();
-        }
+        this->__verify(owner_key);
 
         // verify that this is an extant file
         if(this->IsDeleted())
@@ -714,15 +719,7 @@ FVFile::FVFile(QDir & dir, FVUserKeyPair & key, const FVUserPublicKey * owner_ke
         this->md->read_from_stream(st);
 
         // then check signature and key table provenance
-        this->md->verify();
-        if(owner_key != NULL)
-        {
-            this->md->kt.verify(*owner_key);
-        }
-        else
-        {
-            this->md->kt.verify();
-        }
+        this->__verify(owner_key);
 
         // verify that this is an extant directory
         if(this->IsDeleted())
@@ -817,15 +814,7 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
     this->md->read_from_stream(st);
 
     // then check signature and key table provenance
-    this->md->verify();
-    if(owner_key != NULL)
-    {
-        this->md->kt.verify(*owner_key);
-    }
-    else
-    {
-        this->md->kt.verify();
-    }
+    this->__verify(owner_key);
 
     // verify that this is an extant file
     if(this->IsDeleted())
@@ -868,9 +857,45 @@ FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FV
     /// Here we're given just the md file; there is no immediate local path.
     /// If this is a non-deleted directory then check the existence of the corresponding folder.
     ///
-    /// TODO actually do this
 
-    throw FVFileOperationException("mdonly constructor not yet implemented");
+    // Verify that the md_file exists
+    if(!(md_file.exists()))
+    {
+        throw FVFileReadAccessException("requested metadata file does not exist");
+    }
+
+    // and load it
+    QDataStream st(&md_file);
+    this->md = QSharedPointer<fv_file_metadata_t>(new fv_file_metadata_t);
+    this->md->read_from_stream(st);
+
+    // then check signature and key table provenance
+    this->__verify(owner_key);
+
+    // verify that this is a directory or deleted thing
+    if(!(this->IsDirectory()) & !(this->IsDeleted()))
+    {
+        throw FVFileOperationException("API misuse: using md-only constructor with nondeleted nondirectory")
+    }
+
+    // load-cache the FEK and FNEK
+    this->md->kt.cache_secret_keys(key);
+
+    // compute the missing fn and set the state correctly
+    QString md_fn = md_file.fileName();
+    if(encrypted)
+    {
+        this->filename_enc = md_fn;
+        this->filename_pt = this->md->dec_fn(md_fn);
+    }
+    else
+    {
+        this->filename_pt = md_fn;
+        this->filename_enc = this->md->enc_fn(md_fn);
+    }
+    this->ctl->state = FV_FILE_STATE_MDONLY;
+
+    // all done!
 }
 
 FVFile::~FVFile()

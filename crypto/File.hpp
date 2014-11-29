@@ -169,6 +169,8 @@ private:
     QString __encrypt(QString path_to, QString path_from);
     QString __writemd(QString path_to, FVUserKeyPair & k);
 
+    void __verify(FVUserPublicKey * owner_key);
+
 
 public:
     /* Initialisation and cleanup */
