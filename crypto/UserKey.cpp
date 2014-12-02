@@ -164,12 +164,12 @@ const unsigned char * FVUserKeyPair::GetECDHPubKey() const
 
 const unsigned char * FVUserKeyPair::GetSignSecKey(uint32_t id) const
 {
-    return this->__key->data(id)->seckey_sign;
+    return this->__key->const_data(id)->seckey_sign;
 }
 
 const unsigned char * FVUserKeyPair::GetECDHSecKey(uint32_t id) const
 {
-    return this->__key->data(id)->seckey_ecdh;
+    return this->__key->const_data(id)->seckey_ecdh;
 }
 
 const QSharedPointer<FVUserPublicKey> FVUserKeyPair::GetPubKey() const
@@ -235,7 +235,7 @@ FVUserKeyPair::ComputeECDHSharedSecret(const FVUserPublicKey & other, uint32_t i
     QSharedPointer<FVSecureObject<fv_ecdh_secret_t> > ret (new FVSecureObject<fv_ecdh_secret_t>);
     auto ret_id = ret->UnlockRW();
     this->ComputeECDHSharedSecret(ret->data(ret_id)->data, other, id);
-    ret->Lock(id);
+    ret->Lock(ret_id);
     return ret;
 }
 
