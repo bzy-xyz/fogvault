@@ -17,3 +17,8 @@ SOURCES += \
     crypto/CryptoCommon.cpp \
     crypto/File.cpp \
     crypto/UserKey.cpp
+
+CONFIG += c++11
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += libsodium

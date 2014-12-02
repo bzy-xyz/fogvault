@@ -578,7 +578,7 @@ struct fv_file_control_t
     fv_file_state_t state;
 };
 
-void FVFile::__verify(FVUserPublicKey * owner_key)
+void FVFile::__verify(const FVUserPublicKey * owner_key)
 {
     this->md->verify();
     if(owner_key != NULL)
@@ -875,7 +875,7 @@ FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FV
     // verify that this is a directory or deleted thing
     if(!(this->IsDirectory()) & !(this->IsDeleted()))
     {
-        throw FVFileOperationException("API misuse: using md-only constructor with nondeleted nondirectory")
+        throw FVFileOperationException("API misuse: using md-only constructor with nondeleted nondirectory");
     }
 
     // load-cache the FEK and FNEK
