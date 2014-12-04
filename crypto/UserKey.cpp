@@ -134,6 +134,12 @@ FVUserKeyPair::FVUserKeyPair(const QString & filename, const QString & password)
 
     sodium_free(k);
 
+    // populate the pubkey fields
+    // ECDH
+    crypto_scalarmult_base(this->__key_pub->pubkey_ecdh, this->__key->const_data(lock_id)->seckey_ecdh);
+    // signing
+    crypto_sign_ed25519_sk_to_pk(this->__key_pub->pubkey_sign, this->__key->const_data(lock_id)->seckey_sign);
+
     // seal the seckey to safeguard it while it is not needed
     this->__key->Lock(lock_id);
 }
@@ -194,7 +200,7 @@ int FVUserKeyPair::SaveToFile(const QString & filename, const QString & password
     // encrypt the key pair
     auto id = this->__key->UnlockRO();
     crypto_secretbox_easy(
-                to_write.crypted, (const unsigned char *)this->__key->data(id), sizeof(fv_user_seckey_t),
+                to_write.crypted, (const unsigned char *)this->__key->const_data(id), sizeof(fv_user_seckey_t),
                 to_write.nonce, k
                 );
     this->__key->Lock(id);
