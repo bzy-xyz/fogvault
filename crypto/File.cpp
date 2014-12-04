@@ -18,6 +18,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <QDateTime>
+#include <QtDebug>
 
 
 enum fv_file_state_t
@@ -61,7 +62,7 @@ struct fv_file_keytable_entry_t
         auto dhs_id = dhsec->UnlockRO();
 
         if(crypto_secretbox_open_easy(ret->data(fn_id)->data, fnek_enc, sizeof(fnek_enc),
-                                   fnek_nonce, dhsec->data(dhs_id)->data)
+                                   fnek_nonce, dhsec->const_data(dhs_id)->data)
                 == -1)
         {
             throw FVFileInvalidPublicKeyException();
@@ -88,7 +89,7 @@ struct fv_file_keytable_entry_t
         auto dhs_id = dhsec->UnlockRO();
 
         if(crypto_secretbox_open_easy(ret->data(fn_id)->data, fek_enc, sizeof(fek_enc),
-                                   fek_nonce, dhsec->data(dhs_id)->data)
+                                   fek_nonce, dhsec->const_data(dhs_id)->data)
                 == -1)
         {
             throw FVFileInvalidPublicKeyException();
@@ -283,6 +284,10 @@ struct fv_file_keytable_t
 
         FVUserKeyPair fkp;
 
+        // write the pubkey to the correct field
+        QByteArray fkp_pub = fkp.GetPubKey()->Serialize();
+        memcpy(this->file_pubkey, fkp_pub.data(), sizeof(this->file_pubkey));
+
         for(QVector<fv_file_keytable_entry_t>::iterator i = user_keys.begin(); i != user_keys.end(); i++)
         {
             i->rekey(fkp, *__fnek, *__fek);
@@ -298,6 +303,10 @@ struct fv_file_keytable_t
     {
         // generate new FEK and FNEK, and redo the whole thing
         FVUserKeyPair fkp;
+
+        // write the pubkey to the correct field
+        QByteArray fkp_pub = fkp.GetPubKey()->Serialize();
+        memcpy(this->file_pubkey, fkp_pub.data(), sizeof(this->file_pubkey));
 
         QSharedPointer<FVSecureObject<fv_fnek_t> > fnek (new FVSecureObject<fv_fnek_t>);
         QSharedPointer<FVSecureObject<fv_fek_t> > fek (new FVSecureObject<fv_fek_t>);
@@ -560,7 +569,7 @@ struct fv_file_metadata_t
 
         if(crypto_secretbox_open_easy(
             (unsigned char*)pt_utf8.data(), (unsigned char*)ct_utf8.data(), ct_utf8.length(),
-                    this->fn_revnum, this->kt.__fnek->data(fnek_id)->data
+                    this->fn_revnum, this->kt.__fnek->const_data(fnek_id)->data
                     ) == -1)
         {
             throw FVCryptoDecryptVerifyException();
@@ -784,7 +793,7 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
 
     // Pull out some basic file info
     QFileInfo dat_fi (dat_file);
-    QString dat_fn = dat_file.fileName();
+    QString dat_fn = dat_fi.completeBaseName();
     QDir dat_dir = dat_fi.dir();
 
     // Verify that the file exists (a nonexistent file is bad news)
@@ -836,13 +845,13 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
     if(encrypted)
     {
         this->filename_enc = dat_fn;
-        this->filename_pt = this->md->dec_fn(dat_fn);
+        this->filename_pt = this->md->dec_fn(this->filename_enc);
         this->ctl->state = FV_FILE_STATE_CT;
     }
     else
     {
         this->filename_pt = dat_fn;
-        this->filename_enc = this->md->enc_fn(dat_fn);
+        this->filename_enc = this->md->enc_fn(this->filename_pt);
         this->ctl->state = FV_FILE_STATE_PT;
     }
 
@@ -882,7 +891,8 @@ FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FV
     this->md->kt.cache_secret_keys(key);
 
     // compute the missing fn and set the state correctly
-    QString md_fn = md_file.fileName();
+    QFileInfo md_fi(md_file);
+    QString md_fn = md_fi.completeBaseName();
     if(encrypted)
     {
         this->filename_enc = md_fn;
@@ -961,16 +971,17 @@ QString FVFile::__decrypt(QString path_to, QString path_from)
     do
     {
         QByteArray ad = this->md->adata(offset);
+        //qDebug() << ad.toBase64();
         ct_read = from.read(ct_buf.data(), FOGVAULT_BLOCK_ENC_LENGTH);
         if(crypto_aead_chacha20poly1305_decrypt((unsigned char*)pt_buf.data(), &pt_dec, NULL,
                                                 (unsigned char*)ct_buf.data(), ct_read,
                                                 (unsigned char*)ad.data(),
                                                 ad.length(),
                                                 this->md->revnum,
-                                                this->md->kt.__fek.data()->data(k_id)->data)
+                                                this->md->kt.__fek.data()->const_data(k_id)->data)
                 == -1)
         {
-            this->md->kt.__fnek.data()->Lock(k_id);
+            this->md->kt.__fek.data()->Lock(k_id);
             throw FVCryptoDecryptVerifyException();
         }
         to.write(pt_buf.data(), pt_dec);
@@ -1017,6 +1028,7 @@ QString FVFile::__encrypt(QString path_to, QString path_from)
     do
     {
         QByteArray ad = this->md->adata(offset);
+        //qDebug() << ad.toBase64();
         pt_read = from.read(pt_buf.data(), FOGVAULT_BLOCK_LENGTH);
         crypto_aead_chacha20poly1305_encrypt((unsigned char*)ct_buf.data(),
                                              &ct_enc,
@@ -1026,7 +1038,7 @@ QString FVFile::__encrypt(QString path_to, QString path_from)
                                              ad.length(),
                                              NULL,
                                              (const unsigned char *)&nonce,
-                                             this->md->kt.__fek.data()->data(k_id)->data);
+                                             this->md->kt.__fek.data()->const_data(k_id)->data);
         to.write(ct_buf.data(), ct_enc);
         offset++;
         nonce++;
@@ -1132,19 +1144,19 @@ QString FVFile::WriteCT()
     }
 
     // if we are in plaintext mode, we encrypt and write the file to a temp directory
-    QString tmp_path = QDir::temp().absoluteFilePath(this->filename_enc);
+    QString tmp_path = QDir::temp().absoluteFilePath(this->filename_enc + FOGVAULT_FILE_CTX_EXTENSION);
     return this->__encrypt(tmp_path, this->path_local);
 }
 
 QString FVFile::WriteMD(bool encrypt_filename)
 {
-    QString tmp_path = QDir::temp().absoluteFilePath((encrypt_filename ? filename_enc : filename_pt));
+    QString tmp_path = QDir::temp().absoluteFilePath((encrypt_filename ? filename_enc : filename_pt) + FOGVAULT_FILE_MD_EXTENSION);
     return this->__writemd(tmp_path, this->key);
 }
 
 QString FVFile::WriteMD(QDir & dir, bool encrypt_filename)
 {
-    QString path = dir.absoluteFilePath((encrypt_filename ? filename_enc : filename_pt));
+    QString path = dir.absoluteFilePath((encrypt_filename ? filename_enc : filename_pt) + FOGVAULT_FILE_MD_EXTENSION);
     return this->__writemd(path, this->key);
 }
 

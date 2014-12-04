@@ -404,6 +404,6 @@ int FVUserPublicKey::SaveToFile(const QString & filename) const
 
 bool FVUserPublicKey::operator==(const FVUserPublicKey & other) const
 {
-    return (sodium_memcmp(this->__key_pub->pubkey_sign, other.__key_pub->pubkey_sign, FOGVAULT_USERKEY_SIGN_PUB_LENGTH))
-            & (sodium_memcmp(this->__key_pub->pubkey_ecdh, other.__key_pub->pubkey_ecdh, FOGVAULT_USERKEY_ECDH_PUB_LENGTH));
+    return (sodium_memcmp(this->__key_pub->pubkey_sign, other.__key_pub->pubkey_sign, FOGVAULT_USERKEY_SIGN_PUB_LENGTH) == 0)
+            & (sodium_memcmp(this->__key_pub->pubkey_ecdh, other.__key_pub->pubkey_ecdh, FOGVAULT_USERKEY_ECDH_PUB_LENGTH) == 0);
 }
