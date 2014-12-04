@@ -123,10 +123,10 @@ struct fv_file_keytable_entry_t
         auto f_id = fek.UnlockRO();
 
         // encrypt and store the fnek
-        crypto_secretbox_easy(this->fnek_enc, fnek.data(fn_id)->data, FOGVAULT_FNEK_LENGTH, fnek_nonce, dhsec->data(dh_id)->data);
+        crypto_secretbox_easy(this->fnek_enc, fnek.const_data(fn_id)->data, FOGVAULT_FNEK_LENGTH, fnek_nonce, dhsec->const_data(dh_id)->data);
 
         // encrypt and store the fek
-        crypto_secretbox_easy(this->fek_enc, fek.data(f_id)->data, FOGVAULT_FEK_LENGTH, fek_nonce, dhsec->data(dh_id)->data);
+        crypto_secretbox_easy(this->fek_enc, fek.const_data(f_id)->data, FOGVAULT_FEK_LENGTH, fek_nonce, dhsec->const_data(dh_id)->data);
 
         fek.Lock(f_id);
         fnek.Lock(fn_id);
@@ -299,17 +299,17 @@ struct fv_file_keytable_t
         // generate new FEK and FNEK, and redo the whole thing
         FVUserKeyPair fkp;
 
-        QSharedPointer<FVSecureObject<fv_fnek_t> > fnek;
-        QSharedPointer<FVSecureObject<fv_fek_t> > fek;
+        QSharedPointer<FVSecureObject<fv_fnek_t> > fnek (new FVSecureObject<fv_fnek_t>);
+        QSharedPointer<FVSecureObject<fv_fek_t> > fek (new FVSecureObject<fv_fek_t>);
 
         auto fn_d = fnek->UnlockRW();
-        auto f_d = fnek->UnlockRW();
+        auto f_d = fek->UnlockRW();
 
         randombytes_buf(fnek->data(fn_d)->data, FOGVAULT_FNEK_LENGTH);
         randombytes_buf(fek->data(f_d)->data, FOGVAULT_FEK_LENGTH);
 
         fnek->Lock(fn_d);
-        fnek->Lock(f_d);
+        fek->Lock(f_d);
 
         for(QVector<fv_file_keytable_entry_t>::iterator i = user_keys.begin(); i != user_keys.end(); i++)
         {
@@ -536,11 +536,11 @@ struct fv_file_metadata_t
 
         auto fnek_id = this->kt.__fnek->UnlockRO();
 
-        crypto_secretbox_easy((unsigned char*)ct_utf8.data(), (unsigned char*)pt_utf8.data(), pt_utf8.length(), this->fn_revnum, this->kt.__fnek->data(fnek_id)->data);
+        crypto_secretbox_easy((unsigned char*)ct_utf8.data(), (unsigned char*)pt_utf8.data(), pt_utf8.length(), this->fn_revnum, this->kt.__fnek->const_data(fnek_id)->data);
 
         this->kt.__fnek->Lock(fnek_id);
 
-        QByteArray ct_encoded = ct_utf8.toBase64();
+        QByteArray ct_encoded = ct_utf8.toBase64(FOGVAULT_B64_OPTIONS);
 
         return QString(ct_encoded);
     }
@@ -553,7 +553,7 @@ struct fv_file_metadata_t
         }
 
         QByteArray ct_encoded = enc_fn.toUtf8();
-        QByteArray ct_utf8 = QByteArray::fromBase64(ct_encoded);
+        QByteArray ct_utf8 = QByteArray::fromBase64(ct_encoded, FOGVAULT_B64_OPTIONS);
         QByteArray pt_utf8(ct_utf8.length() - crypto_secretbox_MACBYTES, 0);
 
         auto fnek_id = this->kt.__fnek->UnlockRO();
