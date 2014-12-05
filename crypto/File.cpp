@@ -971,13 +971,13 @@ QString FVFile::__decrypt(QString path_to, QString path_from)
     do
     {
         QByteArray ad = this->md->adata(offset);
-        //qDebug() << ad.toBase64();
+        qDebug() << ad.toBase64();
         ct_read = from.read(ct_buf.data(), FOGVAULT_BLOCK_ENC_LENGTH);
         if(crypto_aead_chacha20poly1305_decrypt((unsigned char*)pt_buf.data(), &pt_dec, NULL,
                                                 (unsigned char*)ct_buf.data(), ct_read,
                                                 (unsigned char*)ad.data(),
                                                 ad.length(),
-                                                this->md->revnum,
+                                                (const unsigned char *)&nonce,
                                                 this->md->kt.__fek.data()->const_data(k_id)->data)
                 == -1)
         {
@@ -1028,7 +1028,7 @@ QString FVFile::__encrypt(QString path_to, QString path_from)
     do
     {
         QByteArray ad = this->md->adata(offset);
-        //qDebug() << ad.toBase64();
+        qDebug() << ad.toBase64();
         pt_read = from.read(pt_buf.data(), FOGVAULT_BLOCK_LENGTH);
         crypto_aead_chacha20poly1305_encrypt((unsigned char*)ct_buf.data(),
                                              &ct_enc,

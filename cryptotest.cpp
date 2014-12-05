@@ -263,6 +263,66 @@ int main(int argc, char ** argv)
     QString fvf_reload_pt_fn = fvf_reload.WritePT();
     outs << "file written to " << fvf_reload_pt_fn << "\n";
 
+
+    // Let's try again with a REALLY BIG file
+
+    // Let's create a data1 file
+    outs << "\n\n";
+    outs << "Creating a much bigger test data file...\n";
+    QFile data2_file("data2.dat");
+    data2_file.open(QIODevice::WriteOnly);
+    QTextStream data2_ts(&data2_file);
+    for(int __i = 0; __i < 1048576; __i++)
+    {
+        data2_ts << data1;
+    }
+    data2_file.close();
+
+    // Test the FVFile unknown plaintext constructor
+    outs << "Initializing a FVFile from unknown plaintext...\n";
+    FVFile fvf2(data2_file, kp1);
+
+    // Check the PTFileName and CTFileName to see if they exist
+    outs << "Plaintext file name: " << fvf2.PTFileName() << "\n";
+    outs << "Ciphertext file name: " << fvf2.CTFileName() << "\n";
+
+    // Verify properties
+    outs << "File is " << (fvf2.IsDeleted() ? "deleted" : "not deleted") << "\n";
+    outs << "File is " << (fvf2.IsDirectory() ? "a directory" : "not a directory") << "\n";
+
+    // Time for some big cheese:
+    // write the corresponding MD file
+    outs << "Writing metadata file... ";
+    QString fvf_md_efn2 = fvf2.WriteMD();
+    outs << "file written to " << fvf_md_efn2 << "\n";
+    // write the corresponding CT file
+    outs << "Writing ciphertext file... ";
+    QString fvf_ct_fn2 = fvf2.WriteCT();
+    outs << "file written to " << fvf_ct_fn2 << "\n";
+
+
+    // Now the real test: reloading the data1 from artifacts
+    outs << "Reloading file from generated artifacts...\n";
+    QFile fvf_md_efn_file2(fvf_md_efn2);
+    QFile fvf_ct_fn_file2(fvf_ct_fn2);
+    fvf_md_efn_file2.open(QIODevice::ReadOnly);
+    fvf_ct_fn_file2.open(QIODevice::ReadOnly);
+    FVFile fvf_reload2(fvf_md_efn_file2, fvf_ct_fn_file2, kp1, NULL, true);
+
+    // Check the PTFileName and CTFileName to see if they exist
+    outs << "Plaintext file name: " << fvf_reload2.PTFileName() << "\n";
+    outs << "Ciphertext file name: " << fvf_reload2.CTFileName() << "\n";
+
+    // Verify properties
+    outs << "File is " << (fvf_reload2.IsDeleted() ? "deleted" : "not deleted") << "\n";
+    outs << "File is " << (fvf_reload2.IsDirectory() ? "a directory" : "not a directory") << "\n";
+
+    // Write out plaintext :o
+    outs << "Writing plaintext... ";
+    QString fvf_reload_pt_fn2 = fvf_reload2.WritePT();
+    outs << "file written to " << fvf_reload_pt_fn2 << "\n";
+
+
     outs << "\n\nAll done!\n\n";
 
 }
