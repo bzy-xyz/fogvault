@@ -11,7 +11,7 @@ class FvFileWatcher : public QObject
 private:
     QFileSystemWatcher watcher;
     QVector<QString> pathVector;
-    QVector<QString> pathVector;
+    QMap<QString, > pathVector;
 public:
     ///Constructors
     explicit FvFileWatcher(QObject *parent = 0);

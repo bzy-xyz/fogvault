@@ -12,13 +12,15 @@ HEADERS += \
     crypto/CryptoCommon.hpp \
     crypto/File.hpp \
     crypto/UserKey.hpp \
-    fs/fsTest/fvfilewatcher.h
+    fs/fvfilewatcher.h \
+    fs/fvdropbox.h
 
 SOURCES += \
     crypto/CryptoCommon.cpp \
     crypto/File.cpp \
     crypto/UserKey.cpp \
-    fs/fsTest/fvfilewatcher.cpp
+    fs/fvfilewatcher.cpp \
+    fs/fvdropbox.cpp
 
 
 LIBS += -L"$$_PRO_FILE_PWD_/fs/qtdropbox/lib/"
