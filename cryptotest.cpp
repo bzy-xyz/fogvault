@@ -323,6 +323,27 @@ int main(int argc, char ** argv)
     outs << "file written to " << fvf_reload_pt_fn2 << "\n";
 
 
+    // Now we validate the file deletion behavior
+
+    // mark the file as deleted
+    outs << "Marking file as deleted...\n";
+    fvf_reload2.SetDeleted();
+
+    // and re-export the metadata
+    outs << "Exporting...\n";
+    QString fvf_reload3_md_efn = fvf_reload2.WriteMD(true);
+
+    // reload the metadata into a new file object
+    outs << "Reimporting...\n";
+    QFile fvf_reload3_md_file(fvf_reload3_md_efn);
+    fvf_reload3_md_file.open(QIODevice::ReadOnly);
+    FVFile fvf_reload3a(fvf_reload3_md_file, 0, kp1, NULL, true);
+
+    // and verify that it is still marked deleted and not a directory
+    outs << "Reimported file is " << (fvf_reload3a.IsDeleted() ? "deleted" : "not deleted") << "\n";
+    outs << "Reimported file is " << (fvf_reload3a.IsDirectory() ? "a directory" : "not a directory") << "\n";
+
+
     outs << "\n\nAll done!\n\n";
 
 }
