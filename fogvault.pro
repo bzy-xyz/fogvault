@@ -11,12 +11,14 @@ QMAKE_MAC_SDK = macosx10.9
 HEADERS += \
     crypto/CryptoCommon.hpp \
     crypto/File.hpp \
-    crypto/UserKey.hpp
+    crypto/UserKey.hpp \
+    fs/fsTest/fvfilewatcher.h
 
 SOURCES += \
     crypto/CryptoCommon.cpp \
     crypto/File.cpp \
-    crypto/UserKey.cpp
+    crypto/UserKey.cpp \
+    fs/fsTest/fvfilewatcher.cpp
 
 
 LIBS += -L"$$_PRO_FILE_PWD_/fs/qtdropbox/lib/"
