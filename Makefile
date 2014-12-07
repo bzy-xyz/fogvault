@@ -12,13 +12,13 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -O2 -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -Ifs/qtdropbox -Iqtdropbox -I/usr/local/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.
+INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -Ifs/qtdropbox -Iqtdropbox -I/usr/local/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtXml -I/usr/include/qt5/QtNetwork -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.
 LINK          = g++
 LFLAGS        = -m64 -Wl,-O1
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/itadeufa/858/fogvault/fs/qtdropbox/lib/ -lQtDropbox -L/usr/local/lib -lsodium -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/itadeufa/858/fogvault/fs/qtdropbox/lib/ -lQtDropbox -L/usr/local/lib -lsodium -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Xml -lQt5Network -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -227,7 +227,9 @@ Makefile: fogvault.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.
 		fogvault.pro \
 		/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl \
-		/usr/lib/x86_64-linux-gnu/libQt5Core.prl
+		/usr/lib/x86_64-linux-gnu/libQt5Core.prl \
+		/usr/lib/x86_64-linux-gnu/libQt5Xml.prl \
+		/usr/lib/x86_64-linux-gnu/libQt5Network.prl
 	$(QMAKE) -o Makefile fogvault.pro
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf:
@@ -299,6 +301,8 @@ fogvault.pro:
 /usr/lib/x86_64-linux-gnu/libQt5Widgets.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Gui.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Core.prl:
+/usr/lib/x86_64-linux-gnu/libQt5Xml.prl:
+/usr/lib/x86_64-linux-gnu/libQt5Network.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile fogvault.pro
 
@@ -410,6 +414,13 @@ moc_fvfilewatcher.cpp: /usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qshareddata.h \
 		/usr/include/qt5/QtCore/qset.h \
 		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qdatetime.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
 		fs/fvfilewatcher.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include fs/fvfilewatcher.h -o moc_fvfilewatcher.cpp
 
@@ -470,6 +481,68 @@ moc_fvdropbox.cpp: /usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qcontainerfwd.h \
 		/usr/include/qt5/QtCore/qisenum.h \
 		/usr/include/qt5/QtCore/qobject_impl.h \
+		fs/qtdropbox/qdropbox.h \
+		fs/qtdropbox/qtdropbox_global.h \
+		/usr/include/qt5/QtNetwork/QNetworkAccessManager \
+		/usr/include/qt5/QtNetwork/qnetworkaccessmanager.h \
+		/usr/include/qt5/QtNetwork/QSslConfiguration \
+		/usr/include/qt5/QtNetwork/qsslconfiguration.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtNetwork/qsslsocket.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtNetwork/qtcpsocket.h \
+		/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtNetwork/qsslerror.h \
+		/usr/include/qt5/QtNetwork/qsslcertificate.h \
+		/usr/include/qt5/QtCore/qcryptographichash.h \
+		/usr/include/qt5/QtCore/qdatetime.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtNetwork/qssl.h \
+		/usr/include/qt5/QtCore/QFlags \
+		/usr/include/qt5/QtNetwork/QNetworkReply \
+		/usr/include/qt5/QtNetwork/qnetworkreply.h \
+		/usr/include/qt5/QtCore/QIODevice \
+		/usr/include/qt5/QtCore/QString \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtNetwork/QNetworkRequest \
+		/usr/include/qt5/QtNetwork/qnetworkrequest.h \
+		/usr/include/qt5/QtCore/QSharedDataPointer \
+		/usr/include/qt5/QtCore/QUrl \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/QCryptographicHash \
+		/usr/include/qt5/QtCore/QDateTime \
+		/usr/include/qt5/QtXml/QDomDocument \
+		/usr/include/qt5/QtXml/qdom.h \
+		/usr/include/qt5/QtXml/qtxmlglobal.h \
+		/usr/include/qt5/QtCore/QEventLoop \
+		/usr/include/qt5/QtCore/qeventloop.h \
+		/usr/include/qt5/QtCore/QUrlQuery \
+		/usr/include/qt5/QtCore/QDebug \
+		fs/qtdropbox/qdropboxjson.h \
+		/usr/include/qt5/QtCore/QMap \
+		/usr/include/qt5/QtCore/QList \
+		/usr/include/qt5/QtCore/QStringList \
+		fs/qtdropbox/qdropboxaccount.h \
+		fs/qtdropbox/qdropboxfileinfo.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
 		fs/fvdropbox.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include fs/fvdropbox.h -o moc_fvdropbox.cpp
 
@@ -868,7 +941,14 @@ fvfilewatcher.o: fs/fvfilewatcher.cpp fs/fvfilewatcher.h \
 		/usr/include/qt5/QtCore/qstringmatcher.h \
 		/usr/include/qt5/QtCore/qshareddata.h \
 		/usr/include/qt5/QtCore/qset.h \
-		/usr/include/qt5/QtCore/qcontiguouscache.h
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qdatetime.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o fvfilewatcher.o fs/fvfilewatcher.cpp
 
 fvdropbox.o: fs/fvdropbox.cpp fs/fvdropbox.h \
@@ -928,7 +1008,71 @@ fvdropbox.o: fs/fvdropbox.cpp fs/fvdropbox.h \
 		/usr/include/qt5/QtCore/qvarlengtharray.h \
 		/usr/include/qt5/QtCore/qcontainerfwd.h \
 		/usr/include/qt5/QtCore/qisenum.h \
-		/usr/include/qt5/QtCore/qobject_impl.h
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		fs/qtdropbox/qdropbox.h \
+		fs/qtdropbox/qtdropbox_global.h \
+		/usr/include/qt5/QtNetwork/QNetworkAccessManager \
+		/usr/include/qt5/QtNetwork/qnetworkaccessmanager.h \
+		/usr/include/qt5/QtNetwork/QSslConfiguration \
+		/usr/include/qt5/QtNetwork/qsslconfiguration.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtNetwork/qsslsocket.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtNetwork/qtcpsocket.h \
+		/usr/include/qt5/QtNetwork/qabstractsocket.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtNetwork/qsslerror.h \
+		/usr/include/qt5/QtNetwork/qsslcertificate.h \
+		/usr/include/qt5/QtCore/qcryptographichash.h \
+		/usr/include/qt5/QtCore/qdatetime.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtNetwork/qssl.h \
+		/usr/include/qt5/QtCore/QFlags \
+		/usr/include/qt5/QtNetwork/QNetworkReply \
+		/usr/include/qt5/QtNetwork/qnetworkreply.h \
+		/usr/include/qt5/QtCore/QIODevice \
+		/usr/include/qt5/QtCore/QString \
+		/usr/include/qt5/QtCore/QVariant \
+		/usr/include/qt5/QtNetwork/QNetworkRequest \
+		/usr/include/qt5/QtNetwork/qnetworkrequest.h \
+		/usr/include/qt5/QtCore/QSharedDataPointer \
+		/usr/include/qt5/QtCore/QUrl \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/QCryptographicHash \
+		/usr/include/qt5/QtCore/QDateTime \
+		/usr/include/qt5/QtXml/QDomDocument \
+		/usr/include/qt5/QtXml/qdom.h \
+		/usr/include/qt5/QtXml/qtxmlglobal.h \
+		/usr/include/qt5/QtCore/QEventLoop \
+		/usr/include/qt5/QtCore/qeventloop.h \
+		/usr/include/qt5/QtCore/QUrlQuery \
+		/usr/include/qt5/QtCore/QDebug \
+		fs/qtdropbox/qdropboxjson.h \
+		/usr/include/qt5/QtCore/QMap \
+		/usr/include/qt5/QtCore/QList \
+		/usr/include/qt5/QtCore/QStringList \
+		fs/qtdropbox/qdropboxaccount.h \
+		fs/qtdropbox/qdropboxfileinfo.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qdesktopservices.h \
+		/usr/include/qt5/QtCore/qstandardpaths.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o fvdropbox.o fs/fvdropbox.cpp
 
 moc_fvfilewatcher.o: moc_fvfilewatcher.cpp 

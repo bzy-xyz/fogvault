@@ -8,7 +8,7 @@ FvFileWatcher::FvFileWatcher(QObject *parent) :
 
 
 /// Add the path to the list of watched directories
-FvFileWatcher::FvFileWatcher(QObject *parent, char *path) :
+FvFileWatcher::FvFileWatcher(QObject *parent, const QString & path) :
         QObject(parent)
 {
     addPath(path);
@@ -29,8 +29,8 @@ int FvFileWatcher::UpdateFile(const QString& path){
 return 0;
 }
 
-int FvFileWatcher::addPath(char *path){
-    pathVector.append(QString::fromStdString(path));
+int FvFileWatcher::addPath(const QString & path){
+    //pathVector.append(QString::fromStdString(path));
     watcher.addPath(path);
     return 0;
 }
