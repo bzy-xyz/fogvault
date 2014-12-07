@@ -7,6 +7,8 @@ HEADERS += qtdropbox_global.h\
            qdropboxjson.h \
            qdropboxaccount.h \
            qdropboxfile.h \
+           qdropboxdeltaresponse.h\
            qdropboxfileinfo.h
 
 CONFIG += network
+

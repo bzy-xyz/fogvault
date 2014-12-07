@@ -310,7 +310,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/fogvault1.0.0 || mkdir -p .tmp/fogvault1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/fogvault1.0.0/ && $(COPY_FILE) --parents crypto/CryptoCommon.hpp crypto/File.hpp crypto/UserKey.hpp fs/fvfilewatcher.h fs/fvdropbox.h qtdropbox_global.h qdropbox.h qtdropbox.h qdropboxjson.h qdropboxaccount.h qdropboxfile.h qdropboxfileinfo.h .tmp/fogvault1.0.0/ && $(COPY_FILE) --parents crypto/CryptoCommon.cpp crypto/File.cpp crypto/UserKey.cpp fs/fvfilewatcher.cpp fs/fvdropbox.cpp .tmp/fogvault1.0.0/ && (cd `dirname .tmp/fogvault1.0.0` && $(TAR) fogvault1.0.0.tar fogvault1.0.0 && $(COMPRESS) fogvault1.0.0.tar) && $(MOVE) `dirname .tmp/fogvault1.0.0`/fogvault1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/fogvault1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/fogvault1.0.0/ && $(COPY_FILE) --parents crypto/CryptoCommon.hpp crypto/File.hpp crypto/UserKey.hpp fs/fvfilewatcher.h fs/fvdropbox.h qtdropbox_global.h qdropbox.h qtdropbox.h qdropboxjson.h qdropboxaccount.h qdropboxfile.h qdropboxdeltaresponse.h qdropboxfileinfo.h .tmp/fogvault1.0.0/ && $(COPY_FILE) --parents crypto/CryptoCommon.cpp crypto/File.cpp crypto/UserKey.cpp fs/fvfilewatcher.cpp fs/fvdropbox.cpp .tmp/fogvault1.0.0/ && (cd `dirname .tmp/fogvault1.0.0` && $(TAR) fogvault1.0.0.tar fogvault1.0.0 && $(COMPRESS) fogvault1.0.0.tar) && $(MOVE) `dirname .tmp/fogvault1.0.0`/fogvault1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/fogvault1.0.0
 
 
 clean:compiler_clean 
@@ -541,6 +541,8 @@ moc_fvdropbox.cpp: /usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/QStringList \
 		fs/qtdropbox/qdropboxaccount.h \
 		fs/qtdropbox/qdropboxfileinfo.h \
+		fs/qtdropbox/qdropboxdeltaresponse.h \
+		/usr/include/qt5/QtCore/QEvent \
 		/usr/include/qt5/QtCore/qfile.h \
 		/usr/include/qt5/QtCore/qfiledevice.h \
 		fs/fvdropbox.h
@@ -1069,6 +1071,8 @@ fvdropbox.o: fs/fvdropbox.cpp fs/fvdropbox.h \
 		/usr/include/qt5/QtCore/QStringList \
 		fs/qtdropbox/qdropboxaccount.h \
 		fs/qtdropbox/qdropboxfileinfo.h \
+		fs/qtdropbox/qdropboxdeltaresponse.h \
+		/usr/include/qt5/QtCore/QEvent \
 		/usr/include/qt5/QtCore/qfile.h \
 		/usr/include/qt5/QtCore/qfiledevice.h \
 		/usr/include/qt5/QtGui/qdesktopservices.h \

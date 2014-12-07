@@ -21,6 +21,15 @@ public:
     //Saves the tokens to disk.
     int saveTokenToDisk();
 
+
+    int uploadFile(const QString & localPath, const QString& remotePath);
+
+
+
+    int downloadFile(const QString & remotePath, const QString& localPath);
+
+
+
 signals:
 
 public slots:

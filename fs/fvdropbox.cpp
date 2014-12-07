@@ -65,3 +65,11 @@ int FvDropbox::saveTokenToDisk(){
     fvTokenFile.close();
     return 1;
 }
+
+int FvDropbox::uploadFile(const QString & localPath, const QString& remotePath){
+
+}
+
+int FvDropbox::downloadFile(const QString & remotePath, const QString& localPath){
+
+}
