@@ -344,6 +344,34 @@ int main(int argc, char ** argv)
     outs << "Reimported file is " << (fvf_reload3a.IsDirectory() ? "a directory" : "not a directory") << "\n";
 
 
+    // Now we validate the directory creation behavior
+
+    // let's create a directory
+    QDir tmpdir(QDir::temp());
+    tmpdir.mkdir("newdir");
+
+    QDir newdir(tmpdir.absoluteFilePath("newdir"));
+
+    outs << "\n\n";
+    outs << "Creating a new FVFile for 'newdir'...\n";
+
+    FVFile newdir_fvf(newdir, kp1);
+
+    // Check the PTFileName and CTFileName to see if they exist
+    outs << "Plaintext dir name: " << newdir_fvf.PTFileName() << "\n";
+    outs << "Ciphertext dir name: " << newdir_fvf.CTFileName() << "\n";
+
+    // Verify properties
+    outs << "Dir is " << (newdir_fvf.IsDeleted() ? "deleted" : "not deleted") << "\n";
+    outs << "Dir is " << (newdir_fvf.IsDirectory() ? "a directory" : "not a directory") << "\n";
+
+    outs << "\n";
+
+    // Output metadata
+    QString newdir_md = newdir_fvf.WriteMD();
+    outs << "MD written to " << newdir_md << "\n";
+
+
     outs << "\n\nAll done!\n\n";
 
 }
