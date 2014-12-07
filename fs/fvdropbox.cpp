@@ -1,6 +1,7 @@
 #include "fvdropbox.h"
 #include <qdesktopservices.h>
 #include <qtextstream.h>
+
 FvDropbox::FvDropbox(QObject *parent) :
     QObject(parent), dropbox(APP_KEY, APP_SECRET), fvTokenFile(TOKENFILENAME)
 {
@@ -9,10 +10,11 @@ FvDropbox::FvDropbox(QObject *parent) :
 
 //Returns true if it worked. Returns false on error. Returns DROPBOX_NEED_CONFIRMATION
 int FvDropbox::FvDropboxTryConnect(){
-    QFile fvTokenFile("FvToken");
+    //QFile fvTokenFile("FvToken");
 
     if (fvTokenFile.exists()) // has the application already been approved?
     {
+
         if(fvTokenFile.open(QIODevice::ReadOnly|QIODevice::Text))
         {
             QTextStream instream(&fvTokenFile);
@@ -25,10 +27,9 @@ int FvDropbox::FvDropboxTryConnect(){
                 fvTokenFile.close();
                 return 1;
             }
-        }//If it exists but can't be read, threat as if it doesn't exist
+        }//If it exists but can't be read, treat as if it doesn't exist
         fvTokenFile.close();
     }
-
     //If we can't request the Request token from dropbox, possibly because of key problems:
     if(!dropbox.requestTokenAndWait())
     {
@@ -47,10 +48,11 @@ int FvDropbox::FvDropboxTryConnect(){
 
 int FvDropbox::FvDropboxFinishConnecting(){
 
-    dropbox.requestAccessTokenAndWait();
-
-    saveTokenToDisk();
-    return 1;
+    if (dropbox.requestAccessTokenAndWait()){
+        saveTokenToDisk();
+        return 1;
+    }
+    return false;
 }
 int FvDropbox::saveTokenToDisk(){
     if(!fvTokenFile.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text))

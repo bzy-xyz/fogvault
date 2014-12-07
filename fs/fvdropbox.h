@@ -1,6 +1,5 @@
 #ifndef FVDROPBOX_H
 #define FVDROPBOX_H
-
 #include <QObject>
 #include <qdropbox.h>
 #include <qfile.h>

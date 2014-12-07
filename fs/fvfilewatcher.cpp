@@ -1,5 +1,4 @@
 #include "fvfilewatcher.h"
-#include <cstdio>
 
 FvFileWatcher::FvFileWatcher(QObject *parent) :
     QObject(parent)
