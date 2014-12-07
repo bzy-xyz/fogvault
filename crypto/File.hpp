@@ -16,6 +16,7 @@
 #include <QString>
 #include <QSharedPointer>
 #include <QVector>
+#include <QByteArray>
 
 #include <string>
 
@@ -26,6 +27,7 @@
 
 #define FOGVAULT_FILE_CTX_EXTENSION ".fvc"
 #define FOGVAULT_FILE_MD_EXTENSION ".fvm"
+#define FOGVAULT_FILE_MD_EXTENSION_LENGTH 4
 #define FOGVAULT_FILE_BUNDLE_EXTENSION ".fvb"
 
 #define FOGVAULT_FILENAME_REVNUM_LENGTH crypto_aead_chacha20poly1305_NPUBBYTES
@@ -44,6 +46,8 @@
 
 #define FOGVAULT_BLOCK_ENC_LENGTH 4194304
 #define FOGVAULT_BLOCK_LENGTH (FOGVAULT_BLOCK_ENC_LENGTH - crypto_aead_chacha20poly1305_ABYTES)
+
+#define FOGVAULT_B64_OPTIONS QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals
 
 /// a FogVault file metadata struct (opaque)
 struct fv_file_metadata_t;

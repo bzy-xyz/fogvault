@@ -41,6 +41,8 @@ struct fv_ecdh_secret_t
     unsigned char data[FOGVAULT_ECDH_SECRET_LENGTH];
 };
 
+typedef QSharedPointer<FVSecureObject<fv_ecdh_secret_t> > FVECDHSecretPtr;
+
 
 class FVUserPublicKey;
 class FVUserKeyPair;
