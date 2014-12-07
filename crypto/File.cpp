@@ -1080,8 +1080,12 @@ QString FVFile::WritePT(QDir & dir)
 
     // if we are in ciphertext mode, we decrypt and write the file,
     // then switch to PT mode
-    // TODO THIS IS UNSAFE: it will try to overwrite an existing file; change to write to tmp first
-    this->path_local = this->__decrypt(dir.absoluteFilePath(this->filename_pt), this->path_local);
+    QString tmp_path = QDir::temp().absoluteFilePath(this->filename_enc);
+    tmp_path = this->__decrypt(tmp_path, this->path_local);
+    QDir tmpdir(QDir::temp());
+    tmpdir.rename(tmp_path, dir.absoluteFilePath(this->filename_pt));
+    this->path_local = dir.absoluteFilePath(this->filename_pt);
+    tmpdir.remove(tmp_path);
     this->ctl->state = FV_FILE_STATE_PT;
 
     return this->path_local;
@@ -1102,7 +1106,13 @@ QString FVFile::WritePT(const QString & path)
 
     // if we are in ciphertext mode, we decrypt and write the file,
     // then switch to PT mode
-    this->path_local = this->__decrypt(path, this->path_local);
+    //this->path_local = this->__decrypt(path, this->path_local);
+    QString tmp_path = QDir::temp().absoluteFilePath(this->filename_enc);
+    tmp_path = this->__decrypt(tmp_path, this->path_local);
+    QDir tmpdir(QDir::temp());
+    tmpdir.rename(tmp_path, path);
+    this->path_local = path;
+    tmpdir.remove(tmp_path);
     this->ctl->state = FV_FILE_STATE_PT;
 
     return this->path_local;
