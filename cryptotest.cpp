@@ -246,8 +246,8 @@ int main(int argc, char ** argv)
     outs << "Reloading file from generated artifacts...\n";
     QFile fvf_md_efn_file(fvf_md_efn);
     QFile fvf_ct_fn_file(fvf_ct_fn);
-    fvf_md_efn_file.open(QIODevice::ReadOnly);
-    fvf_ct_fn_file.open(QIODevice::ReadOnly);
+    //fvf_md_efn_file.open(QIODevice::ReadOnly);
+    //fvf_ct_fn_file.open(QIODevice::ReadOnly);
     FVFile fvf_reload(fvf_md_efn_file, fvf_ct_fn_file, kp1, NULL, true);
 
     // Check the PTFileName and CTFileName to see if they exist
@@ -260,7 +260,8 @@ int main(int argc, char ** argv)
 
     // Write out plaintext :o
     outs << "Writing plaintext... ";
-    QString fvf_reload_pt_fn = fvf_reload.WritePT();
+    QDir d(QDir::current());
+    QString fvf_reload_pt_fn = fvf_reload.WritePT(d);
     outs << "file written to " << fvf_reload_pt_fn << "\n";
 
 
@@ -305,8 +306,8 @@ int main(int argc, char ** argv)
     outs << "Reloading file from generated artifacts...\n";
     QFile fvf_md_efn_file2(fvf_md_efn2);
     QFile fvf_ct_fn_file2(fvf_ct_fn2);
-    fvf_md_efn_file2.open(QIODevice::ReadOnly);
-    fvf_ct_fn_file2.open(QIODevice::ReadOnly);
+    //fvf_md_efn_file2.open(QIODevice::ReadOnly);
+    //fvf_ct_fn_file2.open(QIODevice::ReadOnly);
     FVFile fvf_reload2(fvf_md_efn_file2, fvf_ct_fn_file2, kp1, NULL, true);
 
     // Check the PTFileName and CTFileName to see if they exist
@@ -336,7 +337,7 @@ int main(int argc, char ** argv)
     // reload the metadata into a new file object
     outs << "Reimporting...\n";
     QFile fvf_reload3_md_file(fvf_reload3_md_efn);
-    fvf_reload3_md_file.open(QIODevice::ReadOnly);
+    //fvf_reload3_md_file.open(QIODevice::ReadOnly);
     FVFile fvf_reload3a(fvf_reload3_md_file, 0, kp1, NULL, true);
 
     // and verify that it is still marked deleted and not a directory

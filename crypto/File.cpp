@@ -633,6 +633,7 @@ FVFile::FVFile(QFile & pt_file, FVUserKeyPair & key, const FVUserPublicKey * own
     if(md_f.exists())
     {
         // Load the metadata from the file,
+        md_f.open(QIODevice::ReadOnly);
         QDataStream st(&md_f);
         this->md = QSharedPointer<fv_file_metadata_t>(new fv_file_metadata_t);
         this->md->read_from_stream(st);
@@ -644,12 +645,14 @@ FVFile::FVFile(QFile & pt_file, FVUserKeyPair & key, const FVUserPublicKey * own
         if(this->IsDeleted())
         {
             // TODO ???
+            md_f.close();
             throw FVFileOperationException("API misuse: using plaintext constructor with 'deleted' file");
         }
 
         if(this->IsDirectory())
         {
             // TODO ???
+            md_f.close();
             throw FVFileOperationException("API misuse: using plaintext constructor with directory");
         }
 
@@ -670,6 +673,7 @@ FVFile::FVFile(QFile & pt_file, FVUserKeyPair & key, const FVUserPublicKey * own
         this->ctl->state = FV_FILE_STATE_PT;
 
         // ready to go!
+        md_f.close();
     }
     // Otherwise...
     else
@@ -723,6 +727,7 @@ FVFile::FVFile(QDir & dir, FVUserKeyPair & key, const FVUserPublicKey * owner_ke
     if(md_f.exists())
     {
         // Load the metadata from the file,
+        md_f.open(QIODevice::ReadOnly);
         QDataStream st(&md_f);
         this->md = QSharedPointer<fv_file_metadata_t>(new fv_file_metadata_t);
         this->md->read_from_stream(st);
@@ -734,12 +739,14 @@ FVFile::FVFile(QDir & dir, FVUserKeyPair & key, const FVUserPublicKey * owner_ke
         if(this->IsDeleted())
         {
             // TODO ???
+            md_f.close();
             throw FVFileOperationException("API misuse: using directory constructor with 'deleted'");
         }
 
         if(!(this->IsDirectory()))
         {
             // TODO ???
+            md_f.close();
             throw FVFileOperationException("API misuse: using directory constructor with file");
         }
 
@@ -818,6 +825,7 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
     }
 
     // and load it
+    md_file.open(QIODevice::ReadOnly);
     QDataStream st(&md_file);
     this->md = QSharedPointer<fv_file_metadata_t>(new fv_file_metadata_t);
     this->md->read_from_stream(st);
@@ -856,6 +864,7 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
     }
 
     // all done!
+    md_file.close();
 }
 
 FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FVUserPublicKey * owner_key, bool encrypted)
@@ -874,6 +883,7 @@ FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FV
     }
 
     // and load it
+    md_file.open(QIODevice::ReadOnly);
     QDataStream st(&md_file);
     this->md = QSharedPointer<fv_file_metadata_t>(new fv_file_metadata_t);
     this->md->read_from_stream(st);
@@ -906,6 +916,7 @@ FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FV
     this->ctl->state = FV_FILE_STATE_MDONLY;
 
     // all done!
+    md_file.close();
 }
 
 FVFile::~FVFile()
