@@ -2,6 +2,7 @@
 #include "ui_fvmainwindow.h"
 #include "crypto/UserKey.hpp"
 #include <QDebug>
+#include <QInputDialog>
 
 FvMainWindow::FvMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,8 +18,8 @@ FvMainWindow::~FvMainWindow()
 
 void FvMainWindow::on_pushButton_clicked()
 {
-    QString path = QDir::toNativeSeparators(QApplication::applicationDirPath());
-    QDesktopServices::openUrl(QUrl("file:///" + path));
+    // TODO make this open into FogVault folder instead of whatever it's doing now
+    QDesktopServices::openUrl(QUrl("file:///"));
 }
 
 void FvMainWindow::on_genKeyButton_clicked()
@@ -32,11 +33,15 @@ void FvMainWindow::on_exportKeyButton_clicked()
         QString filename = QFileDialog::getSaveFileName();
         FVUserKeyPair* data = keyPair.data();
         if (filename != "") {
-            data->SaveToFile(filename, "password");
+            bool ok;
+            QString password = QInputDialog::getText(this, tr("Set Password"),
+                                                     tr("Password for key file:"), QLineEdit::Normal,
+                                                     "", &ok);
+            data->SaveToFile(filename, password);
         }
     }
     catch (FVExceptionBase &e) {
-        // inform user that file may be saved improperly
+        // TODO inform user that file may be saved improperly
     }
     catch (...) {
         // user probably did something unexpected
@@ -48,12 +53,16 @@ void FvMainWindow::on_loadKeyButton_clicked()
     try {
         QString filename = QFileDialog::getOpenFileName();
         if (filename != "") {
-            QSharedPointer<FVUserKeyPair> newKeyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair(filename, "password"));
+            bool ok;
+            QString password = QInputDialog::getText(this, tr("Enter Password"),
+                                                     tr("Password for key file:"), QLineEdit::Normal,
+                                                     "", &ok);
+            QSharedPointer<FVUserKeyPair> newKeyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair(filename, password));
             keyPair = newKeyPair;
         }
     }
     catch (FVExceptionBase &e) {
-        // Let user know that there was a problem reading the key
+        // TODO Let user know that there was a problem reading the key
     }
     catch (...) {
         // User probably did something unexpected with the UI.
@@ -77,7 +86,7 @@ void FvMainWindow::on_exportPubKeyButton_clicked()
         }
     }
     catch (FVExceptionBase &e) {
-        // inform user that file may be saved improperly
+        // TODO inform user that file may be saved improperly
     }
     catch (...) {
         // user probably did something unexpected
