@@ -2,11 +2,18 @@
 #define FVDROPBOX_H
 #include <QObject>
 #include <qdropbox.h>
+#include <qdropboxfile.h>
 #include <qfile.h>
-#define APP_SECRET "u2vy0nkokq5dyr3"
-#define APP_KEY "nbzilukwd51aanm"
+#include <fvfsexceptions.h>
+
+//#define APP_SECRET "u2vy0nkokq5dyr3"
+//#define APP_KEY "nbzilukwd51aanm"
+#define APP_SECRET "173sttsex8y7ggc"
+#define APP_KEY "pe03snfwfj8jaqi"
 #define DROPBOX_NEED_CONFIRMATION -1
 #define TOKENFILENAME "FvToken"
+#define DROPBOX_PATH_PREFIX "/sandbox/"
+#define DROPBOX_PATH_PREFIX_LENGTH 9
 class FvDropbox : public QObject
 {
     Q_OBJECT
@@ -22,13 +29,15 @@ public:
     int saveTokenToDisk();
 
 
-    int uploadFile(const QString & localPath, const QString& remotePath);
+    int uploadFile(QFile & localFile, const QString& remotePath, bool overWrite=true);
 
 
 
-    int downloadFile(const QString & remotePath, const QString& localPath);
+    int downloadFile(const QString & remotePath, QFile & localFile);
 
+    static QString getAbsoluteRemotePath(const QString& relativePath);
 
+    static QString getRelativeRemotePath(const QString& absolutePath);
 
 signals:
 

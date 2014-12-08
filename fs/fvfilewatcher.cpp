@@ -16,6 +16,14 @@ FvFileWatcher::FvFileWatcher(QObject *parent, const QString & path) :
 
 }
 
+QString FvFileWatcher::getAbsolutePath(const QString & relativePath){
+
+}
+
+QString FvFileWatcher::getRelativePath(const QString & relativePath){
+
+}
+
 
 ///Update stuff on Dropbox + find what changed when receiving a directory change
 int FvFileWatcher::UpdateFolder(const QString& path){

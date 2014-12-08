@@ -14,7 +14,6 @@ class FvFileWatcher : public QObject
 private:
     QFileSystemWatcher watcher;
     QVector<QString> pathVector;
-
     QMap<QString, QDateTime> timeMap;
     QDir fogvaulthome;
 public:

@@ -33,6 +33,7 @@ int FvDropbox::FvDropboxTryConnect(){
     //If we can't request the Request token from dropbox, possibly because of key problems:
     if(!dropbox.requestTokenAndWait())
     {
+        throw FvFsDropboxRequestTokenException();
         return false;
     }
     dropbox.setAuthMethod(QDropbox::Plaintext);
@@ -52,6 +53,7 @@ int FvDropbox::FvDropboxFinishConnecting(){
         saveTokenToDisk();
         return 1;
     }
+    throw FvFsDropboxRequestTokenException("error requesting access token");
     return false;
 }
 int FvDropbox::saveTokenToDisk(){
@@ -66,10 +68,51 @@ int FvDropbox::saveTokenToDisk(){
     return 1;
 }
 
-int FvDropbox::uploadFile(const QString & localPath, const QString& remotePath){
+int FvDropbox::uploadFile(QFile & localFile, const QString& remotePath, bool overWrite){
+    QDropboxFile dropboxFile(remotePath,&dropbox);
+    dropboxFile.setOverwrite(overWrite);
+    if(!dropboxFile.open(QDropboxFile::WriteOnly)){
+        //error opening the file
+        throw FvFsDropboxFileException("Error opening write only remote file");
+    }
+
+    if(!localFile.open(QDropboxFile::ReadOnly)){
+        //error opening the file
+        throw FvFsDropboxFileException("Error opening read only local file");
+    }
+
+    dropboxFile.write(localFile.readAll());
+    localFile.close();
+    dropboxFile.close();
+
 
 }
 
-int FvDropbox::downloadFile(const QString & remotePath, const QString& localPath){
+int FvDropbox::downloadFile(const QString & remotePath, QFile & localFile){
+    QDropboxFile dropboxFile(remotePath,&dropbox);
+    if(!dropboxFile.open(QDropboxFile::ReadOnly)){
+        //error opening the file
+        throw FvFsDropboxFileException("Error opening read only remote file");
+    }
+
+    if(!localFile.open(QDropboxFile::WriteOnly)){
+        //error opening the file
+        throw FvFsDropboxFileException("Error opening read only local file");
+    }
+
+    localFile.write(dropboxFile.readAll());
+    localFile.close();
+    dropboxFile.close();
+}
+
+QString FvDropbox::getAbsoluteRemotePath(const QString& relativePath){
+    return (DROPBOX_PATH_PREFIX+relativePath);
+}
+
+QString FvDropbox::getRelativeRemotePath(const QString& absolutePath){
+    if (!(absolutePath.startsWith(DROPBOX_PATH_PREFIX))){
+            throw FvFsDropboxPathException("path not inside app folder(" DROPBOX_PATH_PREFIX "), path= %s", absolutePath.toStdString().c_str());
+    }
+    return absolutePath.mid(DROPBOX_PATH_PREFIX_LENGTH);
 
 }

@@ -30,7 +30,8 @@ HEADERS += \
     ../../qtdropbox/qtdropbox.h \
     ../../qtdropbox/qtdropbox_global.h \
     ../../qtdropbox/qdropboxdeltaresponse.h \
-    ../../fvfilewatcher.h
+    ../../fvfilewatcher.h \
+    ../../fvfsexceptions.h
 
 LIBS += -L"$$_PRO_FILE_PWD_/../../qtdropbox/lib/"
 include(../../qtdropbox/libqtdropbox.pri)
