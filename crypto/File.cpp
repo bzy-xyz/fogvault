@@ -400,6 +400,7 @@ struct fv_file_metadata_t
 
     // control attributes, not part of saved metadata
     quint32 mdsigkey;
+    bool is_signed;
 
     fv_file_metadata_t()
         : version(FOGVAULT_FILE_VERSION)
@@ -412,6 +413,7 @@ struct fv_file_metadata_t
         randombytes_buf(fn_revnum, FOGVAULT_FILENAME_REVNUM_LENGTH);
         randombytes_buf(revnum, FOGVAULT_FILE_REVNUM_LENGTH);
         mdsigkey = -1;
+        is_signed = false;
     }
 
     quint32 num_blocks()
@@ -421,6 +423,7 @@ struct fv_file_metadata_t
 
     void incr_fn_revnum()
     {
+        is_signed = false;
         // HACK fn_revnum known to be exactly 8 bytes
         quint64 * n = (quint64 *)fn_revnum;
         (*n)++;
@@ -428,6 +431,7 @@ struct fv_file_metadata_t
 
     void incr_revnum(quint64 z = 1)
     {
+        is_signed = false;
         // HACK revnum known to be exactly 8 bytes
         quint64 * n = (quint64 *)revnum;
         (*n) += z;
@@ -435,6 +439,7 @@ struct fv_file_metadata_t
 
     void read_from_stream(QDataStream & s)
     {
+        is_signed = false;
         s.readRawData((char*)magic, FOGVAULT_MD_MAGIC_LENGTH);
         if(sodium_memcmp(magic, FOGVAULT_MD_MAGIC, FOGVAULT_MD_MAGIC_LENGTH) == -1)
         {
@@ -495,6 +500,8 @@ struct fv_file_metadata_t
 
         QDataStream sig_r (&sig, QIODevice::ReadOnly);
         sig_r.readRawData((char*)mdsig, sizeof(mdsig));
+
+        is_signed = true;
     }
 
     bool verify(FVUserPublicKey & k) const
@@ -952,6 +959,7 @@ bool FVFile::IsDirectory() const
 
 void FVFile::SetDeleted()
 {
+    md->is_signed = false;
     md->is_deleted = randombytes_random() | 1;
     this->ctl->state = FV_FILE_STATE_MDONLY;
     this->path_local.clear();
@@ -1011,6 +1019,11 @@ QString FVFile::__decrypt(QString path_to, QString path_from)
 
 QString FVFile::__encrypt(QString path_to, QString path_from)
 {
+    if(!this->md->is_signed)
+    {
+        this->md->sign(this->key);
+    }
+
     QFile from(path_from);
     QFile to(path_to);
 
@@ -1066,7 +1079,10 @@ QString FVFile::__encrypt(QString path_to, QString path_from)
 
 QString FVFile::__writemd(QString path_to, FVUserKeyPair & k)
 {
-    this->md->sign(k);
+    if(!this->md->is_signed)
+    {
+        this->md->sign(k);
+    }
 
     QFile to(path_to);
     if(!(to.open(QIODevice::WriteOnly)))
@@ -1194,16 +1210,19 @@ QVector<FVUserPublicKey> FVFile::ListFileKeys()
 
 void FVFile::AddFileKey(const FVUserPublicKey & key, FVUserKeyPair & owner_key)
 {
+    this->md->is_signed = false;
     this->md->kt.add_key(key, owner_key);
 }
 
 void FVFile::RemoveFileKey(const FVUserPublicKey & key, FVUserKeyPair & owner_key)
 {
+    this->md->is_signed = false;
     this->md->kt.rm_key(key, owner_key);
 }
 
 void FVFile::RemoveFileKey(unsigned int index, FVUserKeyPair & owner_key)
 {
+    this->md->is_signed = false;
     this->md->kt.rm_key(this->md->kt.key_by_index(index), owner_key);
 }
 
