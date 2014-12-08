@@ -398,6 +398,9 @@ struct fv_file_metadata_t
     unsigned char revnum[FOGVAULT_FILE_REVNUM_LENGTH];
     fv_file_keytable_t kt;
 
+    // control attributes, not part of saved metadata
+    quint32 mdsigkey;
+
     fv_file_metadata_t()
         : version(FOGVAULT_FILE_VERSION)
     {
@@ -408,6 +411,7 @@ struct fv_file_metadata_t
         is_directory = randombytes_random() & 0xfffffffe;
         randombytes_buf(fn_revnum, FOGVAULT_FILENAME_REVNUM_LENGTH);
         randombytes_buf(revnum, FOGVAULT_FILE_REVNUM_LENGTH);
+        mdsigkey = -1;
     }
 
     quint32 num_blocks()
@@ -520,13 +524,15 @@ struct fv_file_metadata_t
         return verify(k);
     }
 
-    void verify() const
+    void verify()
     {
         auto keys = this->kt.list_keys();
-        for(auto k_i = keys.begin(); k_i != keys.end(); k_i++)
+        //for(auto k_i = keys.begin(); k_i != keys.end(); k_i++)
+        for(int i = 0; i < keys.length(); i++)
         {
-            if(verify(*k_i))
+            if(verify(keys[i]))
             {
+                this->mdsigkey = i;
                 return;
             }
         }
@@ -1199,4 +1205,9 @@ void FVFile::RemoveFileKey(const FVUserPublicKey & key, FVUserKeyPair & owner_ke
 void FVFile::RemoveFileKey(unsigned int index, FVUserKeyPair & owner_key)
 {
     this->md->kt.rm_key(this->md->kt.key_by_index(index), owner_key);
+}
+
+FVUserPublicKey FVFile::GetMetadataSigningKey() const
+{
+    return this->md->kt.key_by_index(this->md->mdsigkey);
 }

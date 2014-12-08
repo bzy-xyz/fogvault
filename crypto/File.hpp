@@ -284,6 +284,9 @@ public:
     /// This conducts a hard rekey if a key was removed.
     void RemoveFileKey(unsigned int index, FVUserKeyPair & owner_key);
 
+    /// Returns the public key that last signed this file's metadata (modified the file).
+    FVUserPublicKey GetMetadataSigningKey() const;
+
 
 
 };

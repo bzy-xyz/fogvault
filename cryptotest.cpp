@@ -257,6 +257,7 @@ int main(int argc, char ** argv)
     // Verify properties
     outs << "File is " << (fvf_reload.IsDeleted() ? "deleted" : "not deleted") << "\n";
     outs << "File is " << (fvf_reload.IsDirectory() ? "a directory" : "not a directory") << "\n";
+    outs << "MDsigningkey " << QString::fromUtf8(fvf_reload.GetMetadataSigningKey().Serialize().toBase64());
 
     // Write out plaintext :o
     outs << "Writing plaintext... ";
@@ -371,6 +372,10 @@ int main(int argc, char ** argv)
     // Output metadata
     QString newdir_md = newdir_fvf.WriteMD();
     outs << "MD written to " << newdir_md << "\n";
+
+
+    // Reload the directory md
+    //FVFile newdir_fvf_reload()
 
 
     outs << "\n\nAll done!\n\n";
