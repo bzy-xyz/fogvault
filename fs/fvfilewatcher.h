@@ -8,7 +8,7 @@
 #include <qdatetime.h>
 #include <qdir.h>
 #include <qdiriterator.h>
-#include <fvfsexceptions.h>
+#include "fvfsexceptions.h"
 
 class FvFileWatcher : public QObject
 {

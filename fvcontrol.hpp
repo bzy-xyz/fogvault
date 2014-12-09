@@ -15,7 +15,7 @@ class FVControl : public QObject
     Q_OBJECT
 public:
     explicit FVControl(QObject *parent = 0);
-    FVControl(FvDropbox & dbx, FvFileWatcher & fw, QObject * parent = 0);
+    FVControl(FvFs & fs, QObject * parent = 0);
 
     ~FVControl();
 
