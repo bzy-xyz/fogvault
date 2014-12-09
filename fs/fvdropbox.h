@@ -4,7 +4,7 @@
 #include <qdropbox.h>
 #include <qdropboxfile.h>
 #include <qfile.h>
-#include <fvfsexceptions.h>
+#include "fvfsexceptions.h"
 
 //#define APP_SECRET "u2vy0nkokq5dyr3"
 //#define APP_KEY "nbzilukwd51aanm"

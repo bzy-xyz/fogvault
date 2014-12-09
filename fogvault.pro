@@ -15,7 +15,8 @@ HEADERS += \
     fs/fvfilewatcher.h \
     fs/fvdropbox.h \
     fs/fvfs.h \
-    fs/fvfsexceptions.h
+    fs/fvfsexceptions.h \
+    fvmainwindow.h
 
 SOURCES += \
     crypto/CryptoCommon.cpp \
@@ -24,12 +25,14 @@ SOURCES += \
     fs/fvfilewatcher.cpp \
     fs/fvdropbox.cpp \
     fs/fvfs.cpp \
-    fs/fvfsexceptions.cpp
+    fs/fvfsexceptions.cpp \
+    fvmainwindow.cpp \
+    main.cpp
 
 
 LIBS += -L"$$_PRO_FILE_PWD_/fs/qtdropbox/lib/"
-INCLUDEPATH += fs/qtdropbox/ \
-               fs/
+LIBS += -L/usr/lib/x86_64-linux-gnu/
+INCLUDEPATH += fs/qtdropbox/
 
 include(fs/qtdropbox/libqtdropbox.pri)
 
@@ -38,3 +41,6 @@ CONFIG += c++11
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libsodium
+
+FORMS += \
+    fvmainwindow.ui
