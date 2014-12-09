@@ -16,7 +16,9 @@ HEADERS += \
     fs/fvdropbox.h \
     fs/fvfs.h \
     fs/fvfsexceptions.h \
-    fvmainwindow.h
+    fvmainwindow.h \
+    fvcontrol.hpp \
+    fvcontrolworker.hpp
 
 SOURCES += \
     crypto/CryptoCommon.cpp \
@@ -27,7 +29,9 @@ SOURCES += \
     fs/fvfs.cpp \
     fs/fvfsexceptions.cpp \
     fvmainwindow.cpp \
-    main.cpp
+    main.cpp \
+    fvcontrol.cpp \
+    fvcontrolworker.cpp
 
 
 LIBS += -L"$$_PRO_FILE_PWD_/fs/qtdropbox/lib/"

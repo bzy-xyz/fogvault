@@ -1,4 +1,5 @@
 #include "fvmainwindow.h"
+#include "fvcontrol.hpp"
 #include "ui_fvmainwindow.h"
 #include "crypto/UserKey.hpp"
 #include <QDebug>
