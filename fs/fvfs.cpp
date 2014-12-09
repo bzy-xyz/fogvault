@@ -24,17 +24,19 @@ int FvFs::uploadFile(QFile & localFile, const QString& remotePath, bool overWrit
     return fvDropbox.uploadFile(localFile, remotePath, overWrite);
 }
 
+int FvFs::uploadFile(const QString& localPath, bool overWrite){
+    QString remotePath(fvDropbox.getAbsoluteRemotePath(fvFileWatcher.getRelativePath(localPath)));
+    QFile localFile(localPath);
+    return uploadFile(localFile, remotePath, overWrite);
+}
+
+
 ///Downloads a file to localFile
 int FvFs::downloadFile(const QString & remotePath, QFile & localFile){
     return fvDropbox.downloadFile(remotePath, localFile);
 
 }
 
-int FvFs::uploadFile(const QString& localPath, bool overWrite){
-    QString remotePath(fvDropbox.getAbsoluteRemotePath(fvFileWatcher.getRelativePath(localPath)));
-    QFile localFile(localPath);
-    return uploadFile(localFile, remotePath, overWrite);
-}
 
 
 ///Downloads a file to the fogvaultHomeDirectory

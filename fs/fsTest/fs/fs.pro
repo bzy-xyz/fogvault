@@ -17,7 +17,8 @@ INCLUDEPATH += ../../ \
 
 SOURCES += tst_fstest.cpp \
     ../../fvdropbox.cpp \
-    ../../fvfilewatcher.cpp
+    ../../fvfilewatcher.cpp \
+    ../../fvfs.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
@@ -31,7 +32,8 @@ HEADERS += \
     ../../qtdropbox/qtdropbox_global.h \
     ../../qtdropbox/qdropboxdeltaresponse.h \
     ../../fvfilewatcher.h \
-    ../../fvfsexceptions.h
+    ../../fvfsexceptions.h \
+    ../../fvfs.h
 
 LIBS += -L"$$_PRO_FILE_PWD_/../../qtdropbox/lib/"
 include(../../qtdropbox/libqtdropbox.pri)

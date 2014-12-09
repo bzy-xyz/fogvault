@@ -35,8 +35,9 @@ SOURCES += \
 
 
 LIBS += -L"$$_PRO_FILE_PWD_/fs/qtdropbox/lib/"
-LIBS += -L/usr/lib/x86_64-linux-gnu/
-INCLUDEPATH += fs/qtdropbox/
+
+INCLUDEPATH += fs/qtdropbox/ \ 
+                fs/
 
 include(fs/qtdropbox/libqtdropbox.pri)
 
