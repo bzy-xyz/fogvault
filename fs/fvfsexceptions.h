@@ -43,4 +43,17 @@ public:
     }
 };
 
+
+class FvFsFilePathException : public FvFsExceptionBase
+{
+public:
+      FvFsFilePathException(const std::string & extra ="Error converting path", const std::string & desc = "FvFs path exception")
+        : FvFsExceptionBase(extra, desc)
+    {
+
+    }
+};
+
+
+
 #endif // FVFSEXCEPTIONS_H

@@ -28,10 +28,7 @@ public:
     //Saves the tokens to disk.
     int saveTokenToDisk();
 
-
     int uploadFile(QFile & localFile, const QString& remotePath, bool overWrite=true);
-
-
 
     int downloadFile(const QString & remotePath, QFile & localFile);
 
