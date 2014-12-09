@@ -17,6 +17,8 @@ public:
     explicit FVControl(QObject *parent = 0);
     FVControl(FvDropbox & dbx, FvFileWatcher & fw, QObject * parent = 0);
 
+    ~FVControl();
+
 signals:
     void Synchronize();
 

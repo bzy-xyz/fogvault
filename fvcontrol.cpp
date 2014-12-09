@@ -22,6 +22,13 @@ FVControl::FVControl(FvDropbox &dbx, FvFileWatcher &fw, QObject * parent) :
     syncTimer.start(TIMEOUT_INTERVAL);
 }
 
+FVControl::~FVControl()
+{
+    syncTimer.stop();
+    workerThread.quit();
+    workerThread.wait();
+}
+
 void FVControl::HandleSyncDone()
 {
 
