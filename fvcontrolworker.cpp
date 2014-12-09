@@ -7,11 +7,10 @@ FVControlWorker::FVControlWorker(QObject *parent) :
 {
 }
 
-FVControlWorker::FVControlWorker(FvDropbox &dbx, FvFileWatcher &fw, QObject *parent) :
+FVControlWorker::FVControlWorker(FvFs & fs, QObject *parent) :
     QObject(parent)
 {
-    this->dbx = &dbx;
-    this->fw = &fw;
+    this->fs = &fs;
 }
 
 void FVControlWorker::Synchronize()

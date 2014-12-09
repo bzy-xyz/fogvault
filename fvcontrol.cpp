@@ -7,10 +7,10 @@ FVControl::FVControl(QObject *parent) :
 {
 }
 
-FVControl::FVControl(FvDropbox &dbx, FvFileWatcher &fw, QObject * parent) :
+FVControl::FVControl(FvFs & fs, QObject * parent) :
     QObject(parent), syncTimer(this)
 {
-    FVControlWorker * w = new FVControlWorker(dbx, fw, parent);
+    FVControlWorker * w = new FVControlWorker(fs, parent);
     w->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, w, &QObject::deleteLater);
     connect(this, &FVControl::Synchronize, w, &FVControlWorker::Synchronize);
@@ -20,6 +20,7 @@ FVControl::FVControl(FvDropbox &dbx, FvFileWatcher &fw, QObject * parent) :
 
     workerThread.start();
     syncTimer.start(TIMEOUT_INTERVAL);
+    qDebug() << "START";
 }
 
 FVControl::~FVControl()

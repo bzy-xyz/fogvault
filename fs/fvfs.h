@@ -2,8 +2,8 @@
 #define FVFS_H
 
 #include <QObject>
-#include <fvdropbox.h>
-#include<fvfilewatcher.h>
+#include "fvdropbox.h"
+#include "fvfilewatcher.h"
 
 class FvFs : public QObject
 {

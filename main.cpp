@@ -14,10 +14,9 @@ int main(int argc, char *argv[])
     FvMainWindow w;
     w.show();
 
-    FvDropbox dbx;
-    FvFileWatcher fw(0, QDir::home().absoluteFilePath("FogVault/"));
+    FvFs fs;
 
-    FVControl ctl(dbx, fw);
+    FVControl ctl(fs);
 
     return a.exec();
 }
