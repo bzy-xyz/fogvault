@@ -84,6 +84,7 @@ int FvDropbox::uploadFile(QFile & localFile, const QString& remotePath, bool ove
     dropboxFile.write(localFile.readAll());
     localFile.close();
     dropboxFile.close();
+    return 0;
 
 
 }
@@ -103,6 +104,7 @@ int FvDropbox::downloadFile(const QString & remotePath, QFile & localFile){
     localFile.write(dropboxFile.readAll());
     localFile.close();
     dropboxFile.close();
+    return 0;
 }
 
 QString FvDropbox::getAbsoluteRemotePath(const QString& relativePath){

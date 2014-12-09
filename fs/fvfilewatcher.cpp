@@ -1,29 +1,64 @@
-#include "fvfilewatcher.h"
-
+﻿#include "fvfilewatcher.h"
 FvFileWatcher::FvFileWatcher(QObject *parent) :
     QObject(parent)
 {
 }
 
 
-/// Add the path to the list of watched directories
 FvFileWatcher::FvFileWatcher(QObject *parent, const QString & path) :
-        QObject(parent)
+        QObject(parent), fogvaulthome(path)
 {
-    addPath(path);
-    QObject::connect(&watcher, SIGNAL(directoryChanged(QString)), this, SLOT(UpdateFolder(QString)));
-    QObject::connect(&watcher, SIGNAL(fileChanged(QString)), this, SLOT(UpdateFile(QString)));
 
+}
+
+FvFileWatcher::FvFileWatcher(QObject *parent, QDir & home) :
+        QObject(parent), fogvaulthome(home)
+{
+
+}
+
+
+QString FvFileWatcher::getAbsolutePath(const QString & relativePath, QDir folder){
+    return (folder.absoluteFilePath(relativePath));
 }
 
 QString FvFileWatcher::getAbsolutePath(const QString & relativePath){
-
+    return (getAbsolutePath(relativePath, QDir(fogvaulthome)));
 }
 
-QString FvFileWatcher::getRelativePath(const QString & relativePath){
-
+QString FvFileWatcher::getRelativePath(const QString & absolutePath, QDir folder){
+    return folder.relativeFilePath(absolutePath);
 }
 
+QString FvFileWatcher::getRelativePath(const QString & absolutePath){
+    return getRelativePath(absolutePath, QDir(fogvaulthome));
+}
+
+QMap<QString, QDateTime> FvFileWatcher::populateTimeMap(QMap<QString, QDateTime>& timeMap, QDir& folder){
+    folder.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks |QDir::Dirs);
+    QFileInfoList files(folder.entryInfoList());
+    QFileInfo fileInfo;
+    int i, length;
+    length=files.length();
+    for (i=0; i<length;i++){
+        fileInfo=files[i];
+        if (!(fileInfo.isDir())){
+            timeMap.insert(fileInfo.canonicalFilePath() ,fileInfo.lastModified());
+        }
+        else{
+            QDir dir(fileInfo.canonicalFilePath());
+            if (dir != fogvaulthome){}
+                populateTimeMap(timeMap, dir);
+        }
+
+    }
+ return timeMap;
+}
+
+
+QMap<QString, QDateTime> FvFileWatcher::populateTimeMap(){
+    return populateTimeMap(timeMap, fogvaulthome);
+}
 
 ///Update stuff on Dropbox + find what changed when receiving a directory change
 int FvFileWatcher::UpdateFolder(const QString& path){
