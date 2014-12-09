@@ -18,20 +18,20 @@ FvFileWatcher::FvFileWatcher(QObject *parent, QDir & home) :
 }
 
 
-QString FvFileWatcher::getAbsolutePath(const QString & relativePath, QDir folder){
+QString FvFileWatcher::getAbsolutePath(const QString & relativePath, QDir & folder){
     return (folder.absoluteFilePath(relativePath));
 }
 
 QString FvFileWatcher::getAbsolutePath(const QString & relativePath){
-    return (getAbsolutePath(relativePath, QDir(fogvaulthome)));
+    return (getAbsolutePath(relativePath, fogvaulthome));
 }
 
-QString FvFileWatcher::getRelativePath(const QString & absolutePath, QDir folder){
+QString FvFileWatcher::getRelativePath(const QString & absolutePath, QDir & folder){
     return folder.relativeFilePath(absolutePath);
 }
 
 QString FvFileWatcher::getRelativePath(const QString & absolutePath){
-    return getRelativePath(absolutePath, QDir(fogvaulthome));
+    return getRelativePath(absolutePath, fogvaulthome);
 }
 
 QMap<QString, QDateTime> FvFileWatcher::populateTimeMap(QMap<QString, QDateTime>& timeMap, QDir& folder){
@@ -57,7 +57,10 @@ QMap<QString, QDateTime> FvFileWatcher::populateTimeMap(QMap<QString, QDateTime>
 
 
 QMap<QString, QDateTime> FvFileWatcher::populateTimeMap(){
-    return populateTimeMap(timeMap, fogvaulthome);
+    QMap<QString, QDateTime> newTimeMap;
+    populateTimeMap(newTimeMap, fogvaulthome);
+    timeMap=newTimeMap;
+    return timeMap;
 }
 
 ///Update stuff on Dropbox + find what changed when receiving a directory change

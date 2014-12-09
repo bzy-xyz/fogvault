@@ -39,7 +39,7 @@ public:
 
     ///Returns the path of the file removing the fogVaultHome path from it
     /// returns NULL if the file is not inside fogVaultHome
-    QString getRelativePath(const QString & absolutePath, QDir folder);
+    QString getRelativePath(const QString & absolutePath, QDir & folder);
 
     ///TODO
     QString getRelativePath(const QString & absolutePath);
@@ -49,7 +49,7 @@ public:
     /// \param relativePath
     /// \return returns the absolute path
     ///
-    QString getAbsolutePath(const QString & relativePath, QDir folder);
+    QString getAbsolutePath(const QString & relativePath, QDir& folder);
 
     ///TODO
     QString getAbsolutePath(const QString & relativePath);

@@ -1,8 +1,9 @@
 #include <QString>
 #include <QtTest>
-#include <fvdropbox.h>
-#include <fvfilewatcher.h>
-#include<../../qtdropbox/qdropbox.h>
+#include "fvdropbox.h"
+#include "fvfilewatcher.h"
+#include "../../qtdropbox/qdropbox.h"
+#include "fvfs.h"
 #include <cstdio>
 #include <iostream>
 
@@ -21,6 +22,7 @@ private Q_SLOTS:
     void testRemotePath();
     void testLocalPath();
     void testTimeMap();
+    void testApplyTimeMap();
 };
 
 FsTest::FsTest()
@@ -143,6 +145,66 @@ void FsTest::testTimeMap()
     }
 }
 
+
+void functionCreated_remove(QString & file){
+    QFile tempfile(file);
+
+    printf("created: %s , %d\n", file.toStdString().c_str(), tempfile.remove());
+}
+
+void functionCreated(QString & file){
+    printf("created: %s , %d\n", file.toStdString().c_str());
+}
+
+void functionModified(QString & file){
+    printf("modified: %s\n", file.toStdString().c_str());
+}
+
+void functionDeleted(QString & file){
+    printf("deleted: %s\n", file.toStdString().c_str());
+}
+
+void FsTest::testApplyTimeMap()
+{
+
+
+    QTemporaryDir tempDir;
+    QDir dir(tempDir.path());
+    FvFs fvFs(tempDir.path());
+    int i;
+    for (i=0;i<10;i++){
+        QFile tempfile(dir.absoluteFilePath(QString('A'+i)));
+        tempfile.open(QFile::WriteOnly);
+        tempfile.putChar('A');
+        tempfile.close();
+    }
+    fvFs.updateTimeMapAndApply(functionCreated_remove,functionModified,functionDeleted);
+    QDir dir2(dir.absoluteFilePath("test"));
+    dir2.mkpath(dir2.absolutePath());
+    for (i=0;i<10;i++){
+        QFile tempfile(dir2.absoluteFilePath(QString('a'+i)));
+        tempfile.open(QFile::WriteOnly);
+        tempfile.putChar('A');
+        tempfile.close();
+    }
+    fvFs.updateTimeMapAndApply(functionCreated_remove,functionModified,functionDeleted);
+    for (i=0;i<10;i++){
+        QFile tempfile(dir.absoluteFilePath(QString('A'+i)));
+        tempfile.open(QFile::WriteOnly);
+        tempfile.putChar('A');
+        tempfile.close();
+    }
+    fvFs.updateTimeMapAndApply(functionCreated,functionModified,functionDeleted);
+    QThread::sleep(1);
+    for (i=0;i<10;i++){
+        QFile tempfile(dir.absoluteFilePath(QString('A'+i)));
+        tempfile.open(QFile::WriteOnly);
+        tempfile.putChar('B');
+        tempfile.close();
+    }
+    fvFs.updateTimeMapAndApply(functionCreated_remove,functionModified,functionDeleted);
+
+}
 
 QTEST_MAIN(FsTest)
 
