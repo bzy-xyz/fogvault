@@ -172,7 +172,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
          return createdNewFolder(fileName);
      }
 
-     QDir dir(fileName);
+     QFile dir(fileName);
      FVFile fvFile(dir, * userKeyPair);
      //Gets the relative path of the file, to find where to put it inside the metada folder
      QString relativePath= fvFileWatcher.getRelativePath(fileInfo.canonicalPath());
@@ -221,6 +221,8 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         QString relativePath= fvFileWatcher.getRelativePath(fileInfo.canonicalPath());
         QDir folder(metadataFolder.filePath(relativePath));
 
+        folder.mkpath(metadataFolder.filePath(relativePath));
+
         //Creates the metadata file inside the metadata folder
         QString mdFilePath = fvFile.WriteMD(folder,false);
         QFile mdFile(mdFilePath);
@@ -233,7 +235,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         QDir tempDir(tmpDir.path());
         QString criptoRelativePath = getRelativeCriptoPath(filePath);
         QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
-        QDir tempCriptoDir(tempInfo.canonicalPath()); //Gets the path of the parent dir
+        QDir tempCriptoDir(tempInfo.canonicalFilePath()); //Gets the path of the parent dir
         tempCriptoDir.mkpath(tempCriptoDir.canonicalPath()); //creates the path
 
         //Creates and upload the ctFile

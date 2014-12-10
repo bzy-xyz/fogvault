@@ -40,8 +40,8 @@ private slots:
 private:
     Ui::FvMainWindow *ui;
     QSharedPointer<FVUserKeyPair> keyPair;
-    FvFs fs;
-    FVControl ctl;
+    QSharedPointer<FvFs> fs;
+    QSharedPointer<FVControl> ctl;
 };
 
 #endif // FVMAINWINDOW_H

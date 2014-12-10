@@ -146,6 +146,7 @@ void FVControlWorker::Synchronize()
 
 
     this->fs->GetFvDropboxRef().UpdateRemoteState();
+    this->fs->updateTimeMapAndApply();
 
     emit SyncDone();
 }

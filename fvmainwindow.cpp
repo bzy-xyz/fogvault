@@ -9,7 +9,6 @@
 
 FvMainWindow::FvMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ctl(fs),
     ui(new Ui::FvMainWindow)
 {
     ui->setupUi(this);
@@ -85,16 +84,21 @@ void FvMainWindow::on_loadKeyButton_clicked()
 
 void FvMainWindow::on_manageDBButton_clicked()
 {
-    fs.FvDropboxTryConnect();
+    this->fs = QSharedPointer<FvFs>(new FvFs(
+                                        QDir::homePath() + "/FogVault",
+                                        this->keyPair.data()
+                                        ));
+    this->fs->FvDropboxTryConnect();
     QMessageBox::StandardButton reply;
     try{
       reply = QMessageBox::question(this, "DB Connect", "Allow Dropbox?");
       if (reply == QMessageBox::Yes) {
-          int connect = fs.FvDropboxFinishConnecting();
+          int connect = this->fs->FvDropboxFinishConnecting();
           if (connect > 0) {
             QLabel* connect_label = this->findChild<QLabel*>("connect_label");
             connect_label->setText("Yes");
-            this->ctl.start(*this->keyPair);
+            this->ctl = QSharedPointer<FVControl>(new FVControl(*this->fs));
+            this->ctl->start(*this->keyPair);
           }
       }
     }
