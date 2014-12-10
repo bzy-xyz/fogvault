@@ -125,6 +125,7 @@ public slots:
 
     void HandleDropboxFileRemoved(const QString dbxPath);
     void HandleDropboxFileStagedLocally(const QString stagingPath, const QString dbxPath);
+    void HandleDropboxDirAdded(const QString dbxPath);
 
 private:
     FvFs * fs;

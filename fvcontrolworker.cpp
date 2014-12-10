@@ -37,6 +37,10 @@ FVControlWorker::FVControlWorker(FvFs & fs, FVUserKeyPair & k, QObject *parent) 
                   &FvDropbox::RemoteFileRemoved,
                   this,
                   &FVControlWorker::HandleDropboxFileRemoved);
+    this->connect(&dbx,
+                  &FvDropbox::RemoteDirAvailable,
+                  this,
+                  &FVControlWorker::HandleDropboxFileRemoved);
 }
 
 void FVControlWorker::HandleDropboxFileRemoved(const QString dbxPath)
@@ -77,6 +81,16 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
     if(e->is_directory && e->fv_dbx_md_exists)
     {
         qDebug() << "TODO: handle extant directory";
+
+
+        QFile mdf(e->fv_staging_path_md);
+        FVFile f(mdf,0,*this->ctl_state.kp);
+
+        QString dirname = f.PTFileName();
+        // TODO:
+        // transform the ciphertext path to a plaintext path
+        // and create a directory at the correct place
+
     }
     else if(e->fv_dbx_md_exists && e->fv_dbx_ct_exists)
     {
@@ -96,6 +110,34 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         f.WriteMD(out_tmp, false);
         qDebug() << "wrote file " << f.PTFileName();
     }
+}
+
+void FVControlWorker::HandleDropboxDirAdded(const QString dbxPath)
+{
+    // Here a dir was created on dbx.
+    // Update the corresponding control entry to add the directory.
+
+    qDebug() << dbxPath << "directory created on Dropbox";
+
+    QSharedPointer<fv_control_entry_t> e = this->ctl_state.by_dbx_path_base(dbxPath);
+
+    e->is_directory = true;
+
+    if(e->fv_dbx_md_exists)
+    {
+        qDebug() << "TODO: handle extant directory";
+        // TODO:
+        // transform the ciphertext path to a plaintext path
+        // and create a directory at the correct place
+        QFile mdf(e->fv_staging_path_md);
+        FVFile f(mdf,0,*this->ctl_state.kp);
+
+        QString dirname = f.PTFileName();
+        // TODO:
+        // transform the ciphertext path to a plaintext path
+        // and create a directory at the correct place
+    }
+
 }
 
 void FVControlWorker::Synchronize()

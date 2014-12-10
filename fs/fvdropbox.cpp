@@ -152,7 +152,14 @@ void FvDropbox::UpdateRemoteState()
                 {
                     remoteInfo.insert(i.key(), i.value());
 
-                    emit RemoteFileAvailable(i.key());
+                    if(i.value()->isDir())
+                    {
+                        emit RemoteDirAvailable(i.key());
+                    }
+                    else
+                    {
+                        emit RemoteFileAvailable(i.key());
+                    }
                 }
             }
         }
