@@ -97,15 +97,22 @@ int FvDropbox::uploadFile(QFile & localFile, const QString& remotePath, bool ove
 }
 
 int FvDropbox::downloadFile(const QString & remotePath, QFile & localFile){
+    qDebug()<< "Dowloading: " << localFile.fileName();
+    if (QFileInfo(localFile).isDir()){
+        return 0;
+    }
     QDropboxFile dropboxFile(remotePath,&dropbox);
     if(!dropboxFile.open(QDropboxFile::ReadOnly)){
         //error opening the file
         throw FvFsDropboxFileException("Error opening read only remote file");
     }
-
+    QDir dir;
+    ///TODO
+    int index = localFile.fileName().lastIndexOf(QDir::separator());
+    dir.mkpath(localFile.fileName().left(index));
     if(!localFile.open(QFile::WriteOnly)){
         //error opening the file
-        throw FvFsDropboxFileException("Error opening read only local file");
+        throw FvFsDropboxFileException("Error opening write only local file");
     }
 
     localFile.write(dropboxFile.readAll());
