@@ -95,6 +95,32 @@
        <string>Export Public Key ...</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>140</y>
+        <width>76</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>User Key:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="uk_label">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>140</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>None</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -204,13 +230,39 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>30</y>
         <width>221</width>
         <height>30</height>
        </rect>
       </property>
       <property name="text">
-       <string>Change Dropbox Account</string>
+       <string>Connect to Dropbox</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Connected:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="connect_label">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>10</y>
+        <width>76</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>No</string>
       </property>
      </widget>
     </widget>
@@ -222,7 +274,7 @@
      <x>0</x>
      <y>0</y>
      <width>539</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
   </widget>

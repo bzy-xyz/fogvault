@@ -14,9 +14,5 @@ int main(int argc, char *argv[])
     FvMainWindow w;
     w.show();
 
-    FvFs fs;
-
-    FVControl ctl(fs);
-
     return a.exec();
 }

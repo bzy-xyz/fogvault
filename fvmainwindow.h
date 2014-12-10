@@ -9,6 +9,8 @@
 #include <QUrl>
 #include <QSharedPointer>
 #include "crypto/UserKey.hpp"
+#include "fs/fvfs.h"
+#include "fvcontrol.hpp"
 
 namespace Ui {
 class FvMainWindow;
@@ -38,6 +40,8 @@ private slots:
 private:
     Ui::FvMainWindow *ui;
     QSharedPointer<FVUserKeyPair> keyPair;
+    FvFs fs;
+    FVControl ctl;
 };
 
 #endif // FVMAINWINDOW_H

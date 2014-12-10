@@ -2,11 +2,14 @@
 #include "fvcontrol.hpp"
 #include "ui_fvmainwindow.h"
 #include "crypto/UserKey.hpp"
+#include "fs/fvfs.h"
 #include <QDebug>
 #include <QInputDialog>
+#include <QMessageBox>
 
 FvMainWindow::FvMainWindow(QWidget *parent) :
     QMainWindow(parent),
+    ctl(fs),
     ui(new Ui::FvMainWindow)
 {
     ui->setupUi(this);
@@ -26,6 +29,8 @@ void FvMainWindow::on_pushButton_clicked()
 void FvMainWindow::on_genKeyButton_clicked()
 {
     keyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair());
+    QLabel* uk_label = this->findChild<QLabel*>("uk_label");
+    uk_label->setText("Generated");
 }
 
 void FvMainWindow::on_exportKeyButton_clicked()
@@ -60,6 +65,8 @@ void FvMainWindow::on_loadKeyButton_clicked()
                                                      "", &ok);
             QSharedPointer<FVUserKeyPair> newKeyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair(filename, password));
             keyPair = newKeyPair;
+            QLabel* uk_label = this->findChild<QLabel*>("uk_label");
+            uk_label->setText("Loaded");
         }
     }
     catch (FVExceptionBase &e) {
@@ -73,7 +80,16 @@ void FvMainWindow::on_loadKeyButton_clicked()
 
 void FvMainWindow::on_manageDBButton_clicked()
 {
-    QDesktopServices::openUrl(QUrl("http://dropbox.com"));
+    fs.FvDropboxTryConnect();
+    QMessageBox::StandardButton reply;
+      reply = QMessageBox::question(this, "DB Connect", "Allow Dropbox?");
+      if (reply == QMessageBox::Yes) {
+          int connect = fs.FvDropboxFinishConnecting();
+          if (connect > 0) {
+            QLabel* connect_label = this->findChild<QLabel*>("connect_label");
+            connect_label->setText("Yes");
+          }
+      }
 }
 
 void FvMainWindow::on_exportPubKeyButton_clicked()
