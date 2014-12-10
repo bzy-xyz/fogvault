@@ -48,6 +48,8 @@ signals:
     void RemoteFileRemoved(const QString dbxPath);
     void RemoteFileStagedLocally(const QString stagingPath, const QString dbxPath);
 
+    void RemoteDirAvailable(const QString dbxPath);
+
 public slots:
     //To be called after the user accepts.
     int FvDropboxFinishConnecting();
