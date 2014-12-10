@@ -32,6 +32,8 @@ public:
 
     int downloadFile(const QString & remotePath, QFile & localFile);
 
+    int deleteFile(const QString & remotePath);
+
     static QString getAbsoluteRemotePath(const QString& relativePath);
 
     static QString getRelativeRemotePath(const QString& absolutePath);

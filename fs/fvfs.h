@@ -16,6 +16,7 @@ private:
     QDir metadataFolder;
     FVUserKeyPair * userKeyPair;
     void createdNewFile(QString & fileName);
+   // QMap <QString, QString>
 public:
     explicit FvFs(QObject *parent = 0);
     FvFs(QString homePath, FVUserKeyPair * keyPair, QObject *parent = 0);
@@ -61,6 +62,9 @@ public:
     /// \return
     ///
     QMap <QString, QDateTime> populateTimeMap();
+
+    QString getRelativeCriptoPath(QString & fileName);
+
 
 signals:
 

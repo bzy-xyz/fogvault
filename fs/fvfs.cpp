@@ -101,9 +101,16 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      return fvFileWatcher.populateTimeMap();
  }
 
+ QString FvFs::getRelativeCriptoPath(QString & fileName){
+
+ }
+
  void FvFs::createdNewFile(QString & fileName){
      QFile file(fileName);
      FVFile fvFile(file, * userKeyPair);
-     fvFile.WriteMD(metadataFolder, false);
-
+     QString mdFileName = fvFile.WriteMD();
+     QFile mdFile(mdFileName);
+     QString ctFileName=fvFile.WriteCT();
+     QFile ctFile(ctFileName);
+     //uploadFile(mdFile,)
  }
