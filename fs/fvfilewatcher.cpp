@@ -42,10 +42,8 @@ QMap<QString, QDateTime> FvFileWatcher::populateTimeMap(QMap<QString, QDateTime>
     length=files.length();
     for (i=0; i<length;i++){
         fileInfo=files[i];
-        if (!(fileInfo.isDir())){
-            timeMap.insert(fileInfo.canonicalFilePath() ,fileInfo.lastModified());
-        }
-        else{
+        timeMap.insert(fileInfo.canonicalFilePath() ,fileInfo.lastModified());
+        if (fileInfo.isDir()){
             QDir dir(fileInfo.canonicalFilePath());
             if (dir != fogvaulthome){}
                 populateTimeMap(timeMap, dir);

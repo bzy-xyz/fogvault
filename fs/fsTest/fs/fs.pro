@@ -18,7 +18,10 @@ INCLUDEPATH += ../../ \
 SOURCES += tst_fstest.cpp \
     ../../fvdropbox.cpp \
     ../../fvfilewatcher.cpp \
-    ../../fvfs.cpp
+    ../../fvfs.cpp \
+    ../../../crypto/CryptoCommon.cpp \
+    ../../../crypto/File.cpp \
+    ../../../crypto/UserKey.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
@@ -33,7 +36,14 @@ HEADERS += \
     ../../qtdropbox/qdropboxdeltaresponse.h \
     ../../fvfilewatcher.h \
     ../../fvfsexceptions.h \
-    ../../fvfs.h
+    ../../fvfs.h \
+    ../../../crypto/CryptoCommon.hpp \
+    ../../../crypto/File.hpp \
+    ../../../crypto/UserKey.hpp
 
 LIBS += -L"$$_PRO_FILE_PWD_/../../qtdropbox/lib/"
 include(../../qtdropbox/libqtdropbox.pri)
+CONFIG += c++11
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += libsodium

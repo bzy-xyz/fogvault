@@ -5,7 +5,7 @@
 #include <QDir>
 #include "fvdropbox.h"
 #include "fvfilewatcher.h"
-#include "crypto/File.hpp"
+#include "../crypto/File.hpp"
 
 class FvFs : public QObject
 {
@@ -16,7 +16,10 @@ private:
     QDir metadataFolder;
     FVUserKeyPair * userKeyPair;
     void createdNewFile(QString & fileName);
-   // QMap <QString, QString>
+    void createdNewFolder(QString & fileName);
+    void null(QString & fileName);
+    QMap <QString, QString> pt2ct;
+    QMap <QString, QString> ct2pt;
 public:
     explicit FvFs(QObject *parent = 0);
     FvFs(QString homePath, FVUserKeyPair * keyPair, QObject *parent = 0);
@@ -76,6 +79,7 @@ public:
     QString getRelativeCriptoPath(QString & fileName);
 
 
+    QString merge2Path(QStringList paths, int index);
 signals:
 
 public slots:

@@ -170,7 +170,7 @@ void FsTest::testApplyTimeMap()
 
     QTemporaryDir tempDir;
     QDir dir(tempDir.path());
-    FvFs fvFs(tempDir.path());
+    FvFs fvFs(tempDir.path(), NULL);
     int i;
     for (i=0;i<10;i++){
         QFile tempfile(dir.absoluteFilePath(QString('A'+i)));

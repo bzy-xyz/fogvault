@@ -101,16 +101,61 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      return fvFileWatcher.populateTimeMap();
  }
 
- QString FvFs::getRelativeCriptoPath(QString & fileName){
+ QString FvFs::getRelativeCriptoPath(QString & fileNameAndPath){
+     QChar separator =QDir::separator();
+     QStringList paths;
+     QString relativePathName=fvFileWatcher.getRelativePath(fileNameAndPath);
+     QString relativeCriptoPath("");
+     int i;
+     paths=relativePathName.split(separator);
+     int length=paths.length();
+     for (i=0;i<length;i++){
+         relativeCriptoPath.append(pt2ct.value(merge2Path(paths,i)));
+     }
+     return relativeCriptoPath;
+ }
+
+ QString FvFs::merge2Path(QStringList paths, int index){
+     QChar separator =QDir::separator();
+     int i;
+     QString path(paths[0]);
+     for (i=1;i<index;i++){
+         path.append(separator);
+         path.append(paths[i]);
+     }
+     return path;
+ }
+ void FvFs::null(QString & fileName){
 
  }
 
  void FvFs::createdNewFile(QString & fileName){
+     QFileInfo fileInfo(fileName);
+     if (fileInfo.isDir()){
+         return createdNewFolder(fileName);
+     }
      QFile file(fileName);
      FVFile fvFile(file, * userKeyPair);
      QString mdFileName = fvFile.WriteMD();
      QFile mdFile(mdFileName);
      QString ctFileName=fvFile.WriteCT();
      QFile ctFile(ctFileName);
-     //uploadFile(mdFile,)
+     //ns uploadFile(mdFile,)
  }
+void FvFs::createdNewFolder(QString & fileName){
+    QFileInfo fileInfo(fileName);
+    if (fileInfo.isDir()){
+        QDir dir(fileName);
+        FVFile fvFile(dir, * userKeyPair);
+        QString relativePath= fvFileWatcher.getRelativePath(fileInfo.absolutePath());
+        QDir folder(metadataFolder.filePath(relativePath));
+        QString mdFilePath = fvFile.WriteMD(folder,false);
+        QFile mdFile(mdFilePath);
+        QString ctFilePath=fvFile.WriteCT();
+        QFile ctFile(ctFilePath);
+        QString criptoRelativePath = getRelativeCriptoPath(fileName);
+        pt2ct.insert(relativePath,criptoRelativePath);
+        ct2pt.insert(criptoRelativePath,relativePath);
+    }
+
+}

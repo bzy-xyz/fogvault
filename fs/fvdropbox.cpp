@@ -3,7 +3,7 @@
 #include <qtextstream.h>
 #include <QDir>
 
-#include "crypto/File.hpp"
+#include "../crypto/File.hpp"
 
 FvDropbox::FvDropbox(QObject *parent) :
     QObject(parent), dropbox(APP_KEY, APP_SECRET), fvTokenFile(TOKENFILENAME)
