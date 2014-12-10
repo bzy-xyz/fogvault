@@ -47,7 +47,9 @@ void FvMainWindow::on_exportKeyButton_clicked()
         }
     }
     catch (FVExceptionBase &e) {
-        // TODO inform user that file may be saved improperly
+        const char* error = e.what();
+        QTextBrowser* log = this->findChild<QTextBrowser*>("log_browser");
+        log->append(QString(error));
     }
     catch (...) {
         // user probably did something unexpected
@@ -68,9 +70,12 @@ void FvMainWindow::on_loadKeyButton_clicked()
             QLabel* uk_label = this->findChild<QLabel*>("uk_label");
             uk_label->setText("Loaded");
         }
+        throw new FVExceptionBase("I'm a string");
     }
     catch (FVExceptionBase &e) {
-        // TODO Let user know that there was a problem reading the key
+        const char* error = e.what();
+        QTextBrowser* log = this->findChild<QTextBrowser*>("log_browser");
+        log->append(QString(error));
     }
     catch (...) {
         // User probably did something unexpected with the UI.
@@ -82,6 +87,7 @@ void FvMainWindow::on_manageDBButton_clicked()
 {
     fs.FvDropboxTryConnect();
     QMessageBox::StandardButton reply;
+    try{
       reply = QMessageBox::question(this, "DB Connect", "Allow Dropbox?");
       if (reply == QMessageBox::Yes) {
           int connect = fs.FvDropboxFinishConnecting();
@@ -91,6 +97,10 @@ void FvMainWindow::on_manageDBButton_clicked()
             this->ctl.start(*this->keyPair);
           }
       }
+    }
+    catch (FvFsDropboxRequestTokenException) {
+        // I don't think I need to do anything here?
+    }
 }
 
 void FvMainWindow::on_exportPubKeyButton_clicked()
@@ -104,7 +114,9 @@ void FvMainWindow::on_exportPubKeyButton_clicked()
         }
     }
     catch (FVExceptionBase &e) {
-        // TODO inform user that file may be saved improperly
+        const char* error = e.what();
+        QTextBrowser* log = this->findChild<QTextBrowser*>("log_browser");
+        log->append(QString(error));
     }
     catch (...) {
         // user probably did something unexpected
