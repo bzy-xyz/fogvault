@@ -562,7 +562,7 @@ struct fv_file_metadata_t
 
         this->kt.__fnek->Lock(fnek_id);
 
-        QByteArray ct_encoded = ct_utf8.toBase64(FOGVAULT_B64_OPTIONS);
+        QByteArray ct_encoded = ct_utf8.toHex();
 
         return QString(ct_encoded);
     }
@@ -575,7 +575,7 @@ struct fv_file_metadata_t
         }
 
         QByteArray ct_encoded = enc_fn.toUtf8();
-        QByteArray ct_utf8 = QByteArray::fromBase64(ct_encoded, FOGVAULT_B64_OPTIONS);
+        QByteArray ct_utf8 = QByteArray::fromHex(ct_encoded);
         QByteArray pt_utf8(ct_utf8.length() - crypto_secretbox_MACBYTES, 0);
 
         auto fnek_id = this->kt.__fnek->UnlockRO();

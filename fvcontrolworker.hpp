@@ -55,13 +55,14 @@ struct fv_control_state_t
         }
         QSharedPointer<fv_control_entry_t> ret (new fv_control_entry_t);
         ret->fv_pt_path = p;
-        idx_pt_path.insert(p, ret);
         ret->fv_dbx_ct_exists = false;
         ret->fv_dbx_md_exists = false;
         ret->needsDownload = false;
         ret->needsUpload = false;
         ret->is_deleted = false;
         ret->is_directory = false;
+
+        idx_pt_path.insert(p, ret);
         return ret;
     }
 
@@ -97,13 +98,13 @@ struct fv_control_state_t
         }
         QSharedPointer<fv_control_entry_t> ret (new fv_control_entry_t);
         ret->fv_dbx_path_base = p;
-        idx_pt_path.insert(p, ret);
         ret->fv_dbx_ct_exists = false;
         ret->fv_dbx_md_exists = false;
         ret->needsDownload = false;
         ret->needsUpload = false;
         ret->is_deleted = false;
         ret->is_directory = false;
+        idx_dbx_path_base.insert(p, ret);
         return ret;
     }
 };

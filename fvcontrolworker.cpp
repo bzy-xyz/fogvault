@@ -81,16 +81,20 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
     else if(e->fv_dbx_md_exists && e->fv_dbx_ct_exists)
     {
         // We now have to write out a file to the local directory
-        try
-        {
-            QFile mdf(e->fv_staging_path_md);
-            QFile ctf(e->fv_staging_path_ct);
-            FVFile f(mdf, ctf, *this->ctl_state.kp);
-        }
-        catch (FVExceptionBase & e)
-        {
+        QFile mdf(e->fv_staging_path_md);
+        QFile ctf(e->fv_staging_path_ct);
+        FVFile f(mdf, ctf, *this->ctl_state.kp);
 
+        // TODO: do this properly
+        QDir tmp = QDir::temp();
+        QDir out_tmp = tmp.absoluteFilePath("FogVaultTestOutput");
+        if(!out_tmp.exists())
+        {
+            tmp.mkdir("FogVaultTestOutput");
         }
+        f.WritePT(out_tmp);
+        f.WriteMD(out_tmp, false);
+        qDebug() << "wrote file " << f.PTFileName();
     }
 }
 
