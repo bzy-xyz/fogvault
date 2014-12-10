@@ -210,6 +210,12 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      ct2pt.insert(criptoRelativeName,relativePathName);
  }
 
+ void FvFs::addDownloadedFile(QString & fileName){
+     QFileInfo fileInfo(filename);
+     fvFileWatcher.timeMap.remove(fileInfo.canonicalFilePath());
+     fvFileWatcher.timeMap.insert(fileInfo.canonicalFilePath(), fileInfo.lastModified());
+ }
+
  void FvFs::createdNewFolder(QString & fileName){
     QFileInfo fileInfo(fileName);
     if (fileInfo.isDir()){
@@ -234,8 +240,8 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         QTemporaryDir tmpDir;
         QDir tempDir(tmpDir.path());
         QString criptoRelativePath = getRelativeCriptoPath(filePath);
-        QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
-        QDir tempCriptoDir(tempInfo.canonicalFilePath()); //Gets the path of the parent dir
+       // QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
+        QDir tempCriptoDir(tempDir.absoluteFilePath(criptoRelativePath)); //Gets the path of the parent dir
         tempCriptoDir.mkpath(tempCriptoDir.canonicalPath()); //creates the path
 
         //Creates and upload the ctFile
@@ -257,3 +263,38 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
     }
 
 }
+
+ void FvFs::modifiedFile(QString & fileName){
+     QFileInfo fileInfo(fileName);
+     if (fileInfo.isDir()){
+         return createdNewFolder(fileName);
+     }
+
+     QFile file(fileName);
+     QString relativePath= fvFileWatcher.getRelativePath(fileInfo.canonicalPath());
+     QString relativeMdName = relativePath+fileInfo.bundleName()+".fvm";
+     QFile mdFile(metadataFolder.filePath(relativeMdName));
+
+
+     FVFile(mdFile, file, * userKeyPair, NULL, false);
+
+
+
+     //Creates a temp folder for the files that will be uploaded
+     QString filePath(QFileInfo(fileName).canonicalPath());
+     QTemporaryDir tmpDir;
+     QDir tempDir(tmpDir.path());
+     QString criptoRelativePath = getRelativeCriptoPath(filePath);
+     QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
+     QDir tempCriptoDir(tempInfo.canonicalPath()); //Gets the path of the parent dir
+     tempCriptoDir.mkpath(tempCriptoDir.canonicalPath()); //creates the path
+
+     //Creates and upload the ctFile
+     QString ctFilePath=fvFile.WriteCT(tempCriptoDir);
+     uploadFile(ctFilePath,tempCriptoDir,true);
+
+     //Creates and upload the mdFile
+     QString mdFilePathCript=fvFile.WriteMD(tempCriptoDir);
+     QFileInfo mdFileInfo(mdFilePathCript);
+     uploadFile(mdFilePathCript,tempCriptoDir, true);
+ }
