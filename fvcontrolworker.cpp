@@ -73,6 +73,7 @@ void FVControlWorker::Synchronize()
     qDebug() << "SYNCHRONIZE";
 
 
+    this->fs->GetFvDropboxRef().UpdateRemoteState();
 
     emit SyncDone();
 }

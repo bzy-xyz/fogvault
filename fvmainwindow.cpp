@@ -88,6 +88,7 @@ void FvMainWindow::on_manageDBButton_clicked()
           if (connect > 0) {
             QLabel* connect_label = this->findChild<QLabel*>("connect_label");
             connect_label->setText("Yes");
+            this->ctl.start(*this->keyPair);
           }
       }
 }

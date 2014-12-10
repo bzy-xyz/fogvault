@@ -158,18 +158,18 @@ FVUserKeyPair::FVUserKeyPair(FVUserKeyPair &other)
 
     // unlock the other seckey (so we can populate it)
 
-    auto other_lock_id = other.SecKeyUnlock();
+    auto other_lock_id = other.__key->UnlockRW();
 
     memcpy(this->__key->data(lock_id)->seckey_ecdh,
-           other.__key->data(lock_id)->seckey_ecdh,
+           other.__key->data(other_lock_id)->seckey_ecdh,
            FOGVAULT_USERKEY_ECDH_SEC_LENGTH);
     memcpy(this->__key->data(lock_id)->seckey_sign,
-           other.__key->data(lock_id)->seckey_sign,
+           other.__key->data(other_lock_id)->seckey_sign,
            FOGVAULT_USERKEY_SIGN_SEC_LENGTH);
 
     // seal the seckey to safeguard it while it is not needed
     this->__key->Lock(lock_id);
-    other.SecKeyLock(other_lock_id);
+    other.__key->Lock(other_lock_id);
 
     // copy the pubkey
     memcpy(this->__key_pub->pubkey_ecdh,
