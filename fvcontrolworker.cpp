@@ -100,14 +100,18 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         FVFile f(mdf, ctf, *this->ctl_state.kp);
 
         // TODO: do this properly
-        QDir tmp = QDir::temp();
-        QDir out_tmp = tmp.absoluteFilePath("FogVaultTestOutput");
-        if(!out_tmp.exists())
+        //QDir tmp = QDir::temp();
+        //QDir out_tmp = tmp.absoluteFilePath("FogVaultTestOutput");
+
+        QDir out_pt = QDir::home().absoluteFilePath("FogVault");
+        QDir out_md = QDir::home().absoluteFilePath(".fogvaultmetadata");
+        /*if(!out_tmp.exists())
         {
             tmp.mkdir("FogVaultTestOutput");
-        }
-        f.WritePT(out_tmp);
-        f.WriteMD(out_tmp, false);
+        }*/
+        QString c = f.WritePT(out_pt);
+        f.WriteMD(out_md, false);
+        this->fs->addDownloadedFile(c);
         qDebug() << "wrote file " << f.PTFileName();
     }
 }

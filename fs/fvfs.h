@@ -84,6 +84,8 @@ public:
 
 
     QString merge2Path(QStringList paths, int index);
+
+    void addDownloadedFile(QString & fileName);
 signals:
 
 public slots:

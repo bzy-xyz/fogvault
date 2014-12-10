@@ -235,8 +235,8 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         QDir tempDir(tmpDir.path());
         QString criptoRelativePath = getRelativeCriptoPath(filePath);
         QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
-        QDir tempCriptoDir(tempInfo.canonicalFilePath()); //Gets the path of the parent dir
-        tempCriptoDir.mkpath(tempCriptoDir.canonicalPath()); //creates the path
+        QDir tempCriptoDir(tempInfo.absoluteFilePath()); //Gets the path of the parent dir
+        tempCriptoDir.mkpath(tempCriptoDir.absolutePath()); //creates the path
 
         //Creates and upload the ctFile
     //    QString ctFilePath=fvFile.WriteCT(tempCriptoDir);
@@ -257,3 +257,13 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
     }
 
 }
+
+ void FvFs::addDownloadedFile(QString & fileName){
+
+     QFileInfo fileInfo(fileName);
+
+     fvFileWatcher.timeMap.remove(fileInfo.canonicalFilePath());
+
+     fvFileWatcher.timeMap.insert(fileInfo.canonicalFilePath(), fileInfo.lastModified());
+
+ }
