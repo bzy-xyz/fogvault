@@ -103,7 +103,7 @@ int FvDropbox::downloadFile(const QString & remotePath, QFile & localFile){
         throw FvFsDropboxFileException("Error opening read only remote file");
     }
 
-    if(!localFile.open(QDropboxFile::WriteOnly)){
+    if(!localFile.open(QFile::WriteOnly)){
         //error opening the file
         throw FvFsDropboxFileException("Error opening read only local file");
     }

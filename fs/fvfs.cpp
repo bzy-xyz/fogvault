@@ -190,17 +190,17 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      QDir tempDir(tmpDir.path());
      QString criptoRelativePath = getRelativeCriptoPath(filePath);
      QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
-     QDir tempCriptoDir(tempInfo.canonicalPath()); //Gets the path of the parent dir
-     tempCriptoDir.mkpath(tempCriptoDir.canonicalPath()); //creates the path
+     QDir tempCriptoDir(tempInfo.absoluteFilePath()); //Gets the path of the parent dir
+     tempCriptoDir.mkpath(tempInfo.absoluteFilePath()); //creates the path
 
      //Creates and upload the ctFile
      QString ctFilePath=fvFile.WriteCT(tempCriptoDir);
-     uploadFile(ctFilePath,tempCriptoDir,true);
+     uploadFile(ctFilePath,tempDir,true);
 
      //Creates and upload the mdFile
      QString mdFilePathCript=fvFile.WriteMD(tempCriptoDir);
      QFileInfo mdFileInfo(mdFilePathCript);
-     uploadFile(mdFilePathCript,tempCriptoDir, true);
+     uploadFile(mdFilePathCript,tempDir, true);
 
 
      //Now add everything to our maps that are used on getRelativeCriptoPath, among other functions
@@ -237,7 +237,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         QString criptoRelativePath = getRelativeCriptoPath(filePath);
         QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
         QDir tempCriptoDir(tempInfo.absoluteFilePath()); //Gets the path of the parent dir
-        tempCriptoDir.mkpath(tempCriptoDir.absolutePath()); //creates the path
+        tempCriptoDir.mkpath(tempInfo.absoluteFilePath()); //creates the path
 
         //Creates and upload the ctFile
     //    QString ctFilePath=fvFile.WriteCT(tempCriptoDir);
