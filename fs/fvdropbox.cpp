@@ -6,9 +6,13 @@
 #include "crypto/File.hpp"
 
 FvDropbox::FvDropbox(QObject *parent) :
-    QObject(parent), dropbox(APP_KEY, APP_SECRET), fvTokenFile(TOKENFILENAME)
+    QObject(parent), dropbox(APP_KEY, APP_SECRET), fvTokenFile(TOKENFILENAME),
+    localStagingDir(QDir::temp().absoluteFilePath("FogVaultStaging"))
 {
-
+    if(!localStagingDir.exists())
+    {
+        QDir::temp().mkdir("FogVaultStaging");
+    }
 }
 
 //Returns true if it worked. Returns false on error. Returns DROPBOX_NEED_CONFIRMATION
@@ -60,7 +64,7 @@ int FvDropbox::FvDropboxFinishConnecting(){
     return false;
 }
 int FvDropbox::saveTokenToDisk(){
-    if(!fvTokenFile.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text))
+    //if(!fvTokenFile.open(QIODevice::WriteOnly|QIODevice::Truncate|QIODevice::Text))
         return false;
 
 
@@ -124,6 +128,7 @@ QString FvDropbox::getRelativeRemotePath(const QString& absolutePath){
 
 void FvDropbox::UpdateRemoteState()
 {
+    qDebug() << "UPDATING REMOTE STATE";
     bool hasMore = true;
     do
     {
@@ -158,10 +163,10 @@ void FvDropbox::UpdateRemoteState()
 
 void FvDropbox::DownloadAndStageFile(const QString dbxPath)
 {
-    QString localPath = localStagingDir.absoluteFilePath(dbxPath.right(1));
+    QString localPath = localStagingDir.absoluteFilePath(dbxPath.right(dbxPath.length()-1));
     QFile localFile(localPath);
 
-    this->downloadFile(dbxPath, localFile);
+    this->downloadFile(this->getAbsoluteRemotePath(dbxPath), localFile);
 
     emit RemoteFileStagedLocally(localPath, dbxPath);
 }

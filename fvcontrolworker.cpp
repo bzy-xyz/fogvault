@@ -51,6 +51,8 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
     // Here a DBX file was received and staged locally.
     // Update the corresponding control entry to add the locally staged file.
 
+    qDebug() << dbxPath << " received from Dropbox -> " << stagingPath;
+
     QSharedPointer<fv_control_entry_t> e = this->ctl_state.by_dbx_path_base(
                                                dbxPath.left(dbxPath.length() - FOGVAULT_FILE_CTX_EXTENSION_LENGTH)
                                            );
@@ -65,6 +67,30 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
     {
         e->fv_dbx_md_exists = true;
         e->fv_staging_path_md = stagingPath;
+    }
+
+    // Do we have enough information from Dropbox to make a decision as to what to do?
+    // in particular:
+    // - If I know I am an ordinary file then I need both a ct and a md before acting
+    // - If I know I am a directory then I need only a md before acting
+    // TODO: care about file deletion
+    if(e->is_directory && e->fv_dbx_md_exists)
+    {
+        qDebug() << "TODO: handle extant directory";
+    }
+    else if(e->fv_dbx_md_exists && e->fv_dbx_ct_exists)
+    {
+        // We now have to write out a file to the local directory
+        try
+        {
+            QFile mdf(e->fv_staging_path_md);
+            QFile ctf(e->fv_staging_path_ct);
+            FVFile f(mdf, ctf, *this->ctl_state.kp);
+        }
+        catch (FVExceptionBase & e)
+        {
+
+        }
     }
 }
 
