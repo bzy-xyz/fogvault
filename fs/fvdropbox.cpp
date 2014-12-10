@@ -1,6 +1,9 @@
 #include "fvdropbox.h"
 #include <qdesktopservices.h>
 #include <qtextstream.h>
+#include <QDir>
+
+#include "crypto/File.hpp"
 
 FvDropbox::FvDropbox(QObject *parent) :
     QObject(parent), dropbox(APP_KEY, APP_SECRET), fvTokenFile(TOKENFILENAME)
@@ -117,4 +120,48 @@ QString FvDropbox::getRelativeRemotePath(const QString& absolutePath){
     }
     return absolutePath.mid(DROPBOX_PATH_PREFIX_LENGTH);
 
+}
+
+void FvDropbox::UpdateRemoteState()
+{
+    bool hasMore = true;
+    do
+    {
+        QDropboxDeltaResponse r = dropbox.requestDeltaAndWait(remoteCursor, "");
+        remoteCursor = r.getNextCursor();
+        hasMore = r.hasMore();
+
+        const QDropboxDeltaEntryMap entries = r.getEntries();
+        for(QDropboxDeltaEntryMap::const_iterator i = entries.begin(); i != entries.end(); i++)
+        {
+            if(i.key().right(FOGVAULT_FILE_MD_EXTENSION_LENGTH) == FOGVAULT_FILE_MD_EXTENSION
+            || i.key().right(FOGVAULT_FILE_CTX_EXTENSION_LENGTH) == FOGVAULT_FILE_CTX_EXTENSION)
+            {
+                if(i.value().isNull())
+                {
+                    remoteInfo.remove(i.key());
+
+                    emit RemoteFileRemoved(i.key());
+                }
+                else
+                {
+                    remoteInfo.insert(i.key(), i.value());
+
+                    emit RemoteFileAvailable(i.key());
+                }
+            }
+        }
+
+    } while (hasMore);
+
+}
+
+void FvDropbox::DownloadAndStageFile(const QString dbxPath)
+{
+    QString localPath = localStagingDir.absoluteFilePath(dbxPath.right(1));
+    QFile localFile(localPath);
+
+    this->downloadFile(dbxPath, localFile);
+
+    emit RemoteFileStagedLocally(localPath, dbxPath);
 }

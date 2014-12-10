@@ -905,10 +905,11 @@ FVFile::FVFile(QFile & md_file, uint32_t reserved, FVUserKeyPair & key, const FV
     this->__verify(owner_key);
 
     // verify that this is a directory or deleted thing
-    if(!(this->IsDirectory()) & !(this->IsDeleted()))
+    // NOTE no longer done because it turns out md-only ctor is actually useful
+    /*if(!(this->IsDirectory()) & !(this->IsDeleted()))
     {
         throw FVFileOperationException("API misuse: using md-only constructor with nondeleted nondirectory");
-    }
+    }*/
 
     // load-cache the FEK and FNEK
     this->md->kt.cache_secret_keys(key);

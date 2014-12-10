@@ -4,6 +4,7 @@
 #include <qdropbox.h>
 #include <qdropboxfile.h>
 #include <qfile.h>
+#include <QDir>
 #include "fvfsexceptions.h"
 
 //#define APP_SECRET "u2vy0nkokq5dyr3"
@@ -14,6 +15,9 @@
 #define TOKENFILENAME "FvToken"
 #define DROPBOX_PATH_PREFIX "/sandbox/"
 #define DROPBOX_PATH_PREFIX_LENGTH 9
+
+typedef QMap<QString, QSharedPointer<QDropboxFileInfo> > QDropboxFileInfoMap;
+
 class FvDropbox : public QObject
 {
     Q_OBJECT
@@ -40,12 +44,32 @@ public:
 
 signals:
 
+    void RemoteFileAvailable(const QString dbxPath);
+    void RemoteFileRemoved(const QString dbxPath);
+    void RemoteFileStagedLocally(const QString stagingPath, const QString dbxPath);
+
 public slots:
     //To be called after the user accepts.
     int FvDropboxFinishConnecting();
+
+    /// \brief Updates the Dropbox remote state (using delta API).
+    ///
+    /// Emits a RemoteFileAvailable if there is a file available.
+    void UpdateRemoteState();
+
+    /// \brief Downloads a file from Dropbox to a local staging area.
+    ///
+    void DownloadAndStageFile(const QString dbxPath);
+
+
 private:
     QDropbox dropbox;
     QFile fvTokenFile;
+
+    QDropboxFileInfoMap remoteInfo;
+    QString remoteCursor;
+
+    QDir localStagingDir;
 
 };
 

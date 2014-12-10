@@ -21,6 +21,16 @@ public:
     explicit FvFs(QObject *parent = 0);
     FvFs(QString homePath, FVUserKeyPair * keyPair, QObject *parent = 0);
 
+    FvDropbox & GetFvDropboxRef()
+    {
+        return fvDropbox;
+    }
+
+    FvFileWatcher & GetFvFileWatcherRef()
+    {
+        return fvFileWatcher;
+    }
+
     ///
     /// \brief FvDropboxTryConnect, Should be called to connect to dropbox. Oepns an URL if the person has
     /// no token
