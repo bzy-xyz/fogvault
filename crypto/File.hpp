@@ -256,6 +256,10 @@ public:
     /// Returns the output filename.
     QString WriteCT();
 
+    /// Writes ciphertext to a new file in the target directory.
+    /// Returns the output filename.
+    QString WriteCT(QDir & dir);
+
     /// Writes metadata to a new temporary file.
     /// Returns the output filename.
     ///

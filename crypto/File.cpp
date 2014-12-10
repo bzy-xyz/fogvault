@@ -1192,6 +1192,24 @@ QString FVFile::WriteCT()
     return this->__encrypt(tmp_path, this->path_local);
 }
 
+QString FVFile::WriteCT(QDir &dir)
+{
+    // does not make sense if we are a deleted file or directory
+    if(this->ctl->state == FV_FILE_STATE_UNKNOWN || this->ctl->state == FV_FILE_STATE_MDONLY)
+    {
+        return QString();
+    }
+    // misuse of API if we are in ciphertext mode (require decrypt first)
+    if(this->ctl->state == FV_FILE_STATE_CT)
+    {
+        throw FVFileInvalidStateException();
+    }
+
+    // if we are in plaintext mode, we encrypt and write the file to a temp directory
+    QString tmp_path = dir.absoluteFilePath(this->filename_enc + FOGVAULT_FILE_CTX_EXTENSION);
+    return this->__encrypt(tmp_path, this->path_local);
+}
+
 QString FVFile::WriteMD(bool encrypt_filename)
 {
     QString tmp_path = QDir::temp().absoluteFilePath((encrypt_filename ? filename_enc : filename_pt) + FOGVAULT_FILE_MD_EXTENSION);
