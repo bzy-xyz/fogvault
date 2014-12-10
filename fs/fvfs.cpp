@@ -6,8 +6,8 @@ FvFs::FvFs(QObject *parent) :
 
 }
 
-FvFs::FvFs(QString homePath, QObject *parent) :
-    QObject(parent), fvDropbox(), fvFileWatcher(0,homePath), metadataFolder((QDir::home()).absoluteFilePath(".fogvaultmetadata"))
+FvFs::FvFs(QString homePath, FVUserKeyPair * keyPair, QObject *parent) :
+    QObject(parent), fvDropbox(), fvFileWatcher(0,homePath), metadataFolder((QDir::home()).absoluteFilePath(".fogvaultmetadata")), userKeyPair(keyPair)
 {
 
 }
@@ -96,6 +96,14 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
  }
 
 
+
  QMap <QString, QDateTime> FvFs::populateTimeMap(){
      return fvFileWatcher.populateTimeMap();
+ }
+
+ void FvFs::createdNewFile(QString & fileName){
+     QFile file(fileName);
+     FVFile fvFile(file, * userKeyPair);
+     fvFile.WriteMD(metadataFolder, false);
+
  }

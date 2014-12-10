@@ -5,6 +5,7 @@
 #include <QDir>
 #include "fvdropbox.h"
 #include "fvfilewatcher.h"
+#include "crypto/File.hpp"
 
 class FvFs : public QObject
 {
@@ -13,9 +14,11 @@ private:
     FvDropbox fvDropbox;
     FvFileWatcher fvFileWatcher;
     QDir metadataFolder;
+    FVUserKeyPair * userKeyPair;
+    void createdNewFile(QString & fileName);
 public:
     explicit FvFs(QObject *parent = 0);
-    FvFs(QString homePath, QObject *parent = 0);
+    FvFs(QString homePath, FVUserKeyPair * keyPair, QObject *parent = 0);
 
     ///
     /// \brief FvDropboxTryConnect, Should be called to connect to dropbox. Oepns an URL if the person has
@@ -53,6 +56,10 @@ public:
                             void functionCreated(QString &), void functionModified(QString &), void functionDeleted(QString &));
     int updateTimeMapAndApply(void functionCreated(QString &), void functionModified(QString &), void functionDeleted(QString &));
 
+    ///
+    /// \brief populateTimeMap: first populate the time Map
+    /// \return
+    ///
     QMap <QString, QDateTime> populateTimeMap();
 
 signals:
