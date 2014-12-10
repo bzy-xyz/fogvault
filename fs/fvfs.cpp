@@ -7,7 +7,7 @@ FvFs::FvFs(QObject *parent) :
 }
 
 FvFs::FvFs(QString homePath, QObject *parent) :
-    QObject(parent), fvDropbox(), fvFileWatcher(0,homePath)
+    QObject(parent), fvDropbox(), fvFileWatcher(0,homePath), metadataFolder((QDir::home()).absoluteFilePath(".fogvaultmetadata"))
 {
 
 }
