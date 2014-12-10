@@ -245,7 +245,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         //Creates and upload the mdFile
         QString mdFilePathCript=fvFile.WriteMD(tempCriptoDir);
         QFileInfo mdFileInfo(mdFilePathCript);
-        uploadFile(mdFilePathCript,tempCriptoDir, true);
+        uploadFile(mdFilePathCript,tempDir, true);
 
 
         //Now add everything to our maps that are used on getRelativeCriptoPath, among other functions
