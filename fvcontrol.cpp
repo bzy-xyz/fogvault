@@ -10,7 +10,19 @@ FVControl::FVControl(QObject *parent) :
 FVControl::FVControl(FvFs & fs, QObject * parent) :
     QObject(parent), syncTimer(this)
 {
-    FVControlWorker * w = new FVControlWorker(fs, parent);
+    this->fs = &fs;
+}
+
+FVControl::~FVControl()
+{
+    syncTimer.stop();
+    workerThread.quit();
+    workerThread.wait();
+}
+
+void FVControl::start(FVUserKeyPair & k)
+{
+    FVControlWorker * w = new FVControlWorker(*fs, k, this->parent());
     w->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, w, &QObject::deleteLater);
     connect(this, &FVControl::Synchronize, w, &FVControlWorker::Synchronize);
@@ -21,13 +33,6 @@ FVControl::FVControl(FvFs & fs, QObject * parent) :
     workerThread.start();
     syncTimer.start(TIMEOUT_INTERVAL);
     qDebug() << "START";
-}
-
-FVControl::~FVControl()
-{
-    syncTimer.stop();
-    workerThread.quit();
-    workerThread.wait();
 }
 
 void FVControl::HandleSyncDone()

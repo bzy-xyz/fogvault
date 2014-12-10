@@ -150,7 +150,6 @@ private:
     QSharedPointer<FVSecureObject<fv_user_seckey_t>> __key;
     QSharedPointer<fv_user_pubkey_t> __key_pub;
 
-    FVUserKeyPair(const FVUserKeyPair & other); // disallow copy
     FVUserKeyPair & operator= (const FVUserKeyPair & other); // disallow assign
 public:
     /** @brief Generates a new user key pair.
@@ -166,6 +165,15 @@ public:
     *       before it can be used for sec-key operation.
     */
     FVUserKeyPair(const QString & filename, const QString & password);
+
+    /**
+     * @brief Copies an existing FVUserKeyPair.
+     * @param other the FVUserKeyPair to copy
+     *
+     * @warning Copying user private keys is hazardous and should only be done
+     * when absolutely necessary.
+     */
+    FVUserKeyPair(FVUserKeyPair & other);
 
     /// Deallocates a key pair.
     ~FVUserKeyPair();

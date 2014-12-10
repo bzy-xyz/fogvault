@@ -144,6 +144,43 @@ FVUserKeyPair::FVUserKeyPair(const QString & filename, const QString & password)
     this->__key->Lock(lock_id);
 }
 
+// Copies a FVUserKeyPair.
+FVUserKeyPair::FVUserKeyPair(FVUserKeyPair &other)
+{
+    // initialize the seckey and pubkey respectively
+    this->__key = QSharedPointer<FVSecureObject<fv_user_seckey_t>>
+                                                                   (new FVSecureObject<fv_user_seckey_t>());
+    this->__key_pub = QSharedPointer<fv_user_pubkey_t>
+                      (new fv_user_pubkey_t);
+    // fetch a handle to the underlying seckey data (so we can populate it)
+    auto lock_id = this->__key->UnlockRW();
+    fv_user_seckey_t * sk = (fv_user_seckey_t *)this->__key->data(lock_id);
+
+    // unlock the other seckey (so we can populate it)
+
+    auto other_lock_id = other.SecKeyUnlock();
+
+    memcpy(this->__key->data(lock_id)->seckey_ecdh,
+           other.__key->data(lock_id)->seckey_ecdh,
+           FOGVAULT_USERKEY_ECDH_SEC_LENGTH);
+    memcpy(this->__key->data(lock_id)->seckey_sign,
+           other.__key->data(lock_id)->seckey_sign,
+           FOGVAULT_USERKEY_SIGN_SEC_LENGTH);
+
+    // seal the seckey to safeguard it while it is not needed
+    this->__key->Lock(lock_id);
+    other.SecKeyLock(other_lock_id);
+
+    // copy the pubkey
+    memcpy(this->__key_pub->pubkey_ecdh,
+           other.__key_pub->pubkey_ecdh,
+           FOGVAULT_USERKEY_ECDH_PUB_LENGTH);
+    memcpy(this->__key_pub->pubkey_sign,
+           other.__key_pub->pubkey_sign,
+           FOGVAULT_USERKEY_SIGN_PUB_LENGTH);
+
+}
+
 FVUserKeyPair::~FVUserKeyPair()
 {
 }

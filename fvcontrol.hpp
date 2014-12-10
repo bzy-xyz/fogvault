@@ -19,6 +19,8 @@ public:
 
     ~FVControl();
 
+    void start(FVUserKeyPair & k);
+
 signals:
     void Synchronize();
 
@@ -29,6 +31,7 @@ public slots:
 private:
     QThread workerThread;
     QTimer syncTimer;
+    FvFs * fs;
 };
 
 #endif // FVCONTROL_HPP
