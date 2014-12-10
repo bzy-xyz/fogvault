@@ -91,12 +91,47 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
 
    return 0;
 }
+
+int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap <QString, QDateTime> &timeMapNew){
+   QList <QString> keys=timeMapNew.keys();
+   int i, length;
+   QString key;
+   QDateTime nullDate;
+   length = keys.length();
+   for (i=0;i<length;i++){
+       key=keys[i];
+       if (timeMapOld.value(key, nullDate) == nullDate){
+           createdNewFile(key);
+       }
+       else if (timeMapOld.value(key, nullDate)!= timeMapNew.value(key, nullDate)){
+           null(key);
+           timeMapOld.remove(key);
+       }
+   }
+
+   keys= timeMapOld.keys();
+   length = keys.length();
+   for (i=0;i<length;i++){
+       key=keys[i];
+       if (timeMapOld.value(key, nullDate)!= timeMapNew.value(key, nullDate)){
+           null(key);
+       }
+   }
+
+   return 0;
+}
+
  int FvFs::updateTimeMapAndApply(void functionCreated(QString &), void functionModified(QString &), void functionDeleted(QString &)){
     QMap <QString, QDateTime> oldTimeMap = fvFileWatcher.timeMap;
     fvFileWatcher.populateTimeMap();
     return compareMapsAndApply(oldTimeMap,fvFileWatcher.timeMap,functionCreated, functionModified, functionDeleted);
  }
 
+ int FvFs::updateTimeMapAndApply(){
+    QMap <QString, QDateTime> oldTimeMap = fvFileWatcher.timeMap;
+    fvFileWatcher.populateTimeMap();
+    return compareMapsAndApply(oldTimeMap,fvFileWatcher.timeMap);
+ }
 
 
  QMap <QString, QDateTime> FvFs::populateTimeMap(){

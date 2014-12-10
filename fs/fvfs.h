@@ -24,6 +24,7 @@ public:
     explicit FvFs(QObject *parent = 0);
     FvFs(QString homePath, FVUserKeyPair * keyPair, QObject *parent = 0);
 
+    int testUpdateTimeMapAndApply();
     FvDropbox & GetFvDropboxRef()
     {
         return fvDropbox;
@@ -69,6 +70,9 @@ public:
     int compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap <QString, QDateTime> &timeMapNew,
                             void functionCreated(QString &), void functionModified(QString &), void functionDeleted(QString &));
     int updateTimeMapAndApply(void functionCreated(QString &), void functionModified(QString &), void functionDeleted(QString &));
+
+    int compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap <QString, QDateTime> &timeMapNew);
+    int updateTimeMapAndApply();
 
     ///
     /// \brief populateTimeMap: first populate the time Map
