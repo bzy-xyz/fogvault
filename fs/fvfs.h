@@ -17,6 +17,8 @@ private:
     FVUserKeyPair * userKeyPair;
     void createdNewFile(QString & fileName);
     void createdNewFolder(QString & fileName);
+    void modifiedFile(QString & fileName);
+
     void null(QString & fileName);
     QMap <QString, QString> pt2ct;
     QMap <QString, QString> ct2pt;
@@ -84,6 +86,8 @@ public:
 
 
     QString merge2Path(QStringList paths, int index);
+
+    void addDownloadedFile(QString & fileName);
 signals:
 
 public slots:

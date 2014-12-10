@@ -104,7 +104,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
            createdNewFile(key);
        }
        else if (timeMapOld.value(key, nullDate)!= timeMapNew.value(key, nullDate)){
-           null(key);
+           modifiedFile(key);
            timeMapOld.remove(key);
        }
    }
@@ -210,11 +210,6 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      ct2pt.insert(criptoRelativeName,relativePathName);
  }
 
- void FvFs::addDownloadedFile(QString & fileName){
-     QFileInfo fileInfo(filename);
-     fvFileWatcher.timeMap.remove(fileInfo.canonicalFilePath());
-     fvFileWatcher.timeMap.insert(fileInfo.canonicalFilePath(), fileInfo.lastModified());
- }
 
  void FvFs::createdNewFolder(QString & fileName){
     QFileInfo fileInfo(fileName);
@@ -240,9 +235,9 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
         QTemporaryDir tmpDir;
         QDir tempDir(tmpDir.path());
         QString criptoRelativePath = getRelativeCriptoPath(filePath);
-       // QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
-        QDir tempCriptoDir(tempDir.absoluteFilePath(criptoRelativePath)); //Gets the path of the parent dir
-        tempCriptoDir.mkpath(tempCriptoDir.canonicalPath()); //creates the path
+        QFileInfo tempInfo(tempDir.absoluteFilePath(criptoRelativePath));
+        QDir tempCriptoDir(tempInfo.absoluteFilePath()); //Gets the path of the parent dir
+        tempCriptoDir.mkpath(tempCriptoDir.absolutePath()); //creates the path
 
         //Creates and upload the ctFile
     //    QString ctFilePath=fvFile.WriteCT(tempCriptoDir);
@@ -271,12 +266,12 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      }
 
      QFile file(fileName);
-     QString relativePath= fvFileWatcher.getRelativePath(fileInfo.canonicalPath());
-     QString relativeMdName = relativePath+fileInfo.bundleName()+".fvm";
+     QString relativeName= fvFileWatcher.getRelativePath(fileInfo.canonicalFilePath());
+     QString relativeMdName = relativeName+".fvm";
      QFile mdFile(metadataFolder.filePath(relativeMdName));
 
 
-     FVFile(mdFile, file, * userKeyPair, NULL, false);
+     FVFile fvFile(mdFile, file, * userKeyPair, NULL, false);
 
 
 
@@ -297,4 +292,13 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      QString mdFilePathCript=fvFile.WriteMD(tempCriptoDir);
      QFileInfo mdFileInfo(mdFilePathCript);
      uploadFile(mdFilePathCript,tempCriptoDir, true);
+}
+  void FvFs::addDownloadedFile(QString & fileName){
+
+     QFileInfo fileInfo(fileName);
+
+     fvFileWatcher.timeMap.remove(fileInfo.canonicalFilePath());
+
+     fvFileWatcher.timeMap.insert(fileInfo.canonicalFilePath(), fileInfo.lastModified());
+
  }

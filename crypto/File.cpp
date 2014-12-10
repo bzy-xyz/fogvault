@@ -1043,10 +1043,10 @@ QString FVFile::__encrypt(QString path_to, QString path_from)
 
     // check the file size
     QFileInfo f_i(from);
-    if(f_i.size() != this->md->pt_size)
-    {
-        throw FVFileMDSizeException();
-    }
+    //if(f_i.size() != this->md->pt_size)
+    //{
+    //    throw FVFileMDSizeException();
+    //}
 
     qint64 pt_read = 0;
     quint64 ct_enc = 0;
