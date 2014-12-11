@@ -84,6 +84,8 @@ public:
 
     QString getRelativeCriptoPath(QString & fileName);
 
+    QString getRelativePlainPath(QString & relativeCriptoPath);
+
 
     QString merge2Path(QStringList paths, int index);
 

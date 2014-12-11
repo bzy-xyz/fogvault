@@ -178,6 +178,10 @@ void FvDropbox::UpdateRemoteState()
 void FvDropbox::DownloadAndStageFile(const QString dbxPath)
 {
     QString localPath = localStagingDir.absoluteFilePath(dbxPath.right(dbxPath.length()-1));
+
+    QFileInfo localFI(localPath);
+    QDir::root().mkpath(localFI.dir().absolutePath());
+
     QFile localFile(localPath);
 
     this->downloadFile(this->getAbsoluteRemotePath(dbxPath), localFile);

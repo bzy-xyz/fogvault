@@ -142,14 +142,19 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      QChar separator =QDir::separator();
      QStringList paths;
      QString relativePathName=fvFileWatcher.getRelativePath(fileNameAndPath);
-     QString relativeCriptoPath("");
+     /*QString relativeCriptoPath("");
      int i;
      paths=relativePathName.split(separator);
      int length=paths.length();
      for (i=0;i<length;i++){
          relativeCriptoPath.append(pt2ct.value(merge2Path(paths,i)));
      }
-     return relativeCriptoPath;
+     return relativeCriptoPath;*/
+     return pt2ct.value(relativePathName);
+ }
+
+ QString FvFs::getRelativePlainPath(QString & relativeCriptoPath){
+     return ct2pt.value(relativeCriptoPath);
  }
 
  QString FvFs::merge2Path(QStringList paths, int index){
@@ -204,7 +209,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
 
 
      //Now add everything to our maps that are used on getRelativeCriptoPath, among other functions
-     QString criptoRelativeName = criptoRelativePath + mdFileInfo.baseName();
+     QString criptoRelativeName = criptoRelativePath + (criptoRelativePath == "" || criptoRelativePath.right(1) == "/" ? "" : "/") + mdFileInfo.baseName();
      QString relativePathName = fvFileWatcher.getRelativePath(fileInfo.absoluteFilePath());
      pt2ct.insert(relativePathName,criptoRelativeName);
      ct2pt.insert(criptoRelativeName,relativePathName);
@@ -250,7 +255,7 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
 
 
         //Now add everything to our maps that are used on getRelativeCriptoPath, among other functions
-        QString criptoRelativeName = criptoRelativePath + mdFileInfo.baseName();
+        QString criptoRelativeName = criptoRelativePath + (criptoRelativePath == "" || criptoRelativePath.right(1) == "/" ? "" : "/") + mdFileInfo.baseName();
         QString relativePathName = fvFileWatcher.getRelativePath(fileInfo.absoluteFilePath());
         pt2ct.insert(relativePathName,criptoRelativeName);
         ct2pt.insert(criptoRelativeName,relativePathName);

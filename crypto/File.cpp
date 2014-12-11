@@ -1028,6 +1028,9 @@ QString FVFile::__encrypt(QString path_to, QString path_from)
     QFile from(path_from);
     QFile to(path_to);
 
+    QFileInfo to_fi(path_to);
+    QDir::root().mkpath(to_fi.dir().absolutePath());
+
     QByteArray ct_buf(FOGVAULT_BLOCK_ENC_LENGTH, 0);
     QByteArray pt_buf(FOGVAULT_BLOCK_LENGTH, 0);
 
@@ -1084,6 +1087,9 @@ QString FVFile::__writemd(QString path_to, FVUserKeyPair & k)
     {
         this->md->sign(k);
     }
+
+    QFileInfo fi(path_to);
+    QDir::root().mkpath(fi.dir().absolutePath());
 
     QFile to(path_to);
     if(!(to.open(QIODevice::WriteOnly)))

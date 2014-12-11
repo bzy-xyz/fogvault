@@ -103,8 +103,27 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         //QDir tmp = QDir::temp();
         //QDir out_tmp = tmp.absoluteFilePath("FogVaultTestOutput");
 
-        QDir out_pt = QDir::home().absoluteFilePath("FogVault");
-        QDir out_md = QDir::home().absoluteFilePath(".fogvaultmetadata");
+        // HACK X( get relative path from staging root
+        // this is bad software engineering, staging path should really be retrievable
+        // from FvDropbox or some global config manager
+        QDir staging_home(QDir::temp().absoluteFilePath("FogVaultStaging"));
+
+        QFileInfo staging_fi(stagingPath);
+        QDir staging_dir = staging_fi.dir();
+        QString relativePath = staging_home.relativeFilePath(staging_dir.absolutePath());
+        QString actualRelativePath = fs->getRelativePlainPath(relativePath);
+
+        QDir out_pt(QDir(QDir::home().absoluteFilePath("FogVault")).absoluteFilePath(actualRelativePath));
+        if(!out_pt.exists())
+        {
+            staging_home.mkpath(out_pt.path());
+        }
+        QDir out_md = (QDir(QDir::home().absoluteFilePath(".fogvaultmetadata")).absoluteFilePath(actualRelativePath));
+        if(!out_md.exists())
+        {
+            staging_home.mkpath(out_md.path());
+        }
+
         /*if(!out_tmp.exists())
         {
             tmp.mkdir("FogVaultTestOutput");
@@ -112,7 +131,7 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         QString c = f.WritePT(out_pt);
         f.WriteMD(out_md, false);
         this->fs->addDownloadedFile(c);
-        qDebug() << "wrote file " << f.PTFileName();
+        qDebug() << "wrote file " << c;
     }
 }
 
