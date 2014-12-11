@@ -490,6 +490,9 @@ struct fv_file_metadata_t
 
     void sign(FVUserKeyPair & k)
     {
+        // advance the ct-nonce
+        this->incr_revnum(this->num_blocks());
+
         QByteArray a;
 
         QDataStream st_w (&a, QIODevice::WriteOnly);
@@ -504,7 +507,7 @@ struct fv_file_metadata_t
         is_signed = true;
     }
 
-    bool verify(FVUserPublicKey & k) const
+    bool verify(FVUserPublicKey & k)
     {
         QByteArray a;
 
@@ -522,10 +525,12 @@ struct fv_file_metadata_t
             return false;
         }
 
+        is_signed = true;
+
         return true;
     }
 
-    bool verify_from_kt(int idx) const
+    bool verify_from_kt(int idx)
     {
         auto k = this->kt.key_by_index(idx);
         return verify(k);
@@ -862,7 +867,8 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
     // load-cache the FEK and FNEK
     this->md->kt.cache_secret_keys(key);
 
-    // compute the missing fn and set the state correctly
+    // compute the missing fn and set the state correctly,
+    // and do other state-dependent operations
     if(encrypted)
     {
         this->filename_enc = dat_fn;
@@ -1237,6 +1243,7 @@ void FVFile::AddFileKey(const FVUserPublicKey & key, FVUserKeyPair & owner_key)
 {
     this->md->is_signed = false;
     this->md->kt.add_key(key, owner_key);
+    //this->md->incr_fn_revnum();
 }
 
 void FVFile::RemoveFileKey(const FVUserPublicKey & key, FVUserKeyPair & owner_key)
