@@ -45,8 +45,7 @@ FvMainWindow::~FvMainWindow()
 
 void FvMainWindow::on_pushButton_clicked()
 {
-    // TODO make this open into FogVault folder instead of whatever it's doing now
-    QDesktopServices::openUrl(QUrl("file:///"));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QDir::homePath() + "/FogVault"));
 }
 
 void FvMainWindow::on_genKeyButton_clicked()
