@@ -104,14 +104,23 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         QString actualRelativePath = fs->getRelativePlainPath(relativePath);
         QString actualRelativePathWithDirname = actualRelativePath + (actualRelativePath == "" || actualRelativePath.right(1) == "/" ? "" : "/") + dirname;
 
+        QDir out_md = (QDir(QDir::home().absoluteFilePath(".fogvaultmetadata")).absoluteFilePath(actualRelativePath));
+        if(!out_md.exists())
+        {
+            staging_home.mkpath(out_md.path());
+        }
+        f.WriteMD(out_md, false);
+
         QDir home_dir(QDir::home().absoluteFilePath("FogVault"));
         QDir out_dir(QDir(home_dir.absoluteFilePath(actualRelativePath)).absoluteFilePath(dirname));
         if(!out_dir.exists())
         {
-            home_dir.mkpath(out_dir.path());
+            home_dir.mkpath(out_dir.absolutePath());
         }
 
         this->fs->addCriptoToPlainMapping(relativePathWithCryptDirname,actualRelativePathWithDirname);
+        QString pathToAdd(out_dir.absolutePath());
+        this->fs->addDownloadedFile(pathToAdd);
     }
     else if(e->fv_dbx_md_exists && e->fv_dbx_ct_exists)
     {

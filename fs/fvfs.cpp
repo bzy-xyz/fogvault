@@ -308,8 +308,8 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
 
      QFileInfo fileInfo(fileName);
 
-     fvFileWatcher.timeMap.remove(fileInfo.canonicalFilePath());
+     fvFileWatcher.timeMap.remove(fileInfo.absoluteFilePath());
 
-     fvFileWatcher.timeMap.insert(fileInfo.canonicalFilePath(), fileInfo.lastModified());
+     fvFileWatcher.timeMap.insert(fileInfo.absoluteFilePath(), fileInfo.lastModified());
 
  }
