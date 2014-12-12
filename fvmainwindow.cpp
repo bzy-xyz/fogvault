@@ -40,7 +40,7 @@ void FvMainWindow::on_exportKeyButton_clicked()
         if (filename != "") {
             bool ok;
             QString password = QInputDialog::getText(this, tr("Set Password"),
-                                                     tr("Password for key file:"), QLineEdit::Normal,
+                                                     tr("Password for key file:"), QLineEdit::Password,
                                                      "", &ok);
             data->SaveToFile(filename, password);
         }
@@ -62,7 +62,7 @@ void FvMainWindow::on_loadKeyButton_clicked()
         if (filename != "") {
             bool ok;
             QString password = QInputDialog::getText(this, tr("Enter Password"),
-                                                     tr("Password for key file:"), QLineEdit::Normal,
+                                                     tr("Password for key file:"), QLineEdit::Password,
                                                      "", &ok);
             QSharedPointer<FVUserKeyPair> newKeyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair(filename, password));
             keyPair = newKeyPair;
