@@ -6,12 +6,32 @@
 #include <QDebug>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QDir>
 
 FvMainWindow::FvMainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::FvMainWindow)
 {
     ui->setupUi(this);
+    // Autoload or autogenerate userkey on run
+    QDir dir(QDir::home().absoluteFilePath(".fvuserkey"));
+    QFile userkey(dir.absoluteFilePath(("fvuserkey")));
+    if (userkey.exists()) {
+        QString filename = dir.absoluteFilePath("fvuserkey");
+        QSharedPointer<FVUserKeyPair> newKeyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair(filename, ""));
+        keyPair = newKeyPair;
+        QLabel* uk_label = this->findChild<QLabel*>("uk_label");
+        uk_label->setText("Loaded");
+    }
+    else {
+        dir.mkpath(QDir::home().absoluteFilePath(".fvuserkey"));
+        keyPair = QSharedPointer<FVUserKeyPair>(new FVUserKeyPair());
+        QLabel* uk_label = this->findChild<QLabel*>("uk_label");
+        uk_label->setText("Generated");
+        QString filename = dir.absoluteFilePath("fvuserkey");
+        FVUserKeyPair* data = keyPair.data();
+        data->SaveToFile(filename, "");
+    }
 }
 
 FvMainWindow::~FvMainWindow()
