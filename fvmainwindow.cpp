@@ -32,6 +32,10 @@ FvMainWindow::FvMainWindow(QWidget *parent) :
         FVUserKeyPair* data = keyPair.data();
         data->SaveToFile(filename, "");
     }
+
+    // mkpath some important directories
+    QDir::home().mkpath("FogVault");
+    QDir::home().mkpath(".fogvaultmetadata");
 }
 
 FvMainWindow::~FvMainWindow()
