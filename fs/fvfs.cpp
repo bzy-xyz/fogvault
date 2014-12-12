@@ -157,6 +157,12 @@ int FvFs::compareMapsAndApply(QMap <QString, QDateTime>& timeMapOld, const QMap 
      return ct2pt.value(relativeCriptoPath);
  }
 
+ void FvFs::addCriptoToPlainMapping(QString & cn, QString pn)
+ {
+     pt2ct.insert(pn,cn);
+     ct2pt.insert(cn,pn);
+ }
+
  QString FvFs::merge2Path(QStringList paths, int index){
      QChar separator =QDir::separator();
      int i;

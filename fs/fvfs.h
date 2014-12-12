@@ -86,6 +86,8 @@ public:
 
     QString getRelativePlainPath(QString & relativeCriptoPath);
 
+    void addCriptoToPlainMapping(QString & cn, QString pn);
+
 
     QString merge2Path(QStringList paths, int index);
 

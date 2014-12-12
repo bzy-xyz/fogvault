@@ -71,6 +71,11 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
     {
         e->fv_dbx_md_exists = true;
         e->fv_staging_path_md = stagingPath;
+
+        QFile mdf(stagingPath);
+        FVFile fvf(mdf, 0, *this->ctl_state.kp);
+        e->is_deleted = fvf.IsDeleted();
+        e->is_directory = fvf.IsDirectory();
     }
 
     // Do we have enough information from Dropbox to make a decision as to what to do?
@@ -87,10 +92,26 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         FVFile f(mdf,0,*this->ctl_state.kp);
 
         QString dirname = f.PTFileName();
-        // TODO:
+
         // transform the ciphertext path to a plaintext path
         // and create a directory at the correct place
+        QDir staging_home(QDir::temp().absoluteFilePath("FogVaultStaging"));
 
+        QFileInfo staging_fi(stagingPath);
+        QDir staging_dir = staging_fi.dir();
+        QString relativePath = staging_home.relativeFilePath(staging_dir.absolutePath());
+        QString relativePathWithCryptDirname = relativePath + (relativePath == "" || relativePath.right(1) == "/" ? "" : "/") + f.CTFileName();
+        QString actualRelativePath = fs->getRelativePlainPath(relativePath);
+        QString actualRelativePathWithDirname = actualRelativePath + (actualRelativePath == "" || actualRelativePath.right(1) == "/" ? "" : "/") + dirname;
+
+        QDir home_dir(QDir::home().absoluteFilePath("FogVault"));
+        QDir out_dir(QDir(home_dir.absoluteFilePath(actualRelativePath)).absoluteFilePath(dirname));
+        if(!out_dir.exists())
+        {
+            home_dir.mkpath(out_dir.path());
+        }
+
+        this->fs->addCriptoToPlainMapping(relativePathWithCryptDirname,actualRelativePathWithDirname);
     }
     else if(e->fv_dbx_md_exists && e->fv_dbx_ct_exists)
     {
