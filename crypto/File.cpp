@@ -818,7 +818,15 @@ FVFile::FVFile(QFile & md_file, QFile & dat_file, FVUserKeyPair & key, const FVU
 
     // Pull out some basic file info
     QFileInfo dat_fi (dat_file);
-    QString dat_fn = dat_fi.completeBaseName();
+    QString dat_fn;
+    if(encrypted)
+    {
+        dat_fn = dat_fi.completeBaseName();
+    }
+    else
+    {
+        dat_fn = dat_fi.fileName();
+    }
     QDir dat_dir = dat_fi.dir();
 
     // Verify that the file exists (a nonexistent file is bad news)

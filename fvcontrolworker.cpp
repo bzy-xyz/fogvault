@@ -132,6 +132,13 @@ void FVControlWorker::HandleDropboxFileStagedLocally(const QString stagingPath, 
         f.WriteMD(out_md, false);
         this->fs->addDownloadedFile(c);
         qDebug() << "wrote file " << c;
+
+        staging_home.remove(e->fv_staging_path_ct);
+        staging_home.remove(e->fv_staging_path_md);
+        e->fv_staging_path_ct = "";
+        e->fv_staging_path_md = "";
+        e->fv_dbx_ct_exists = false;
+        e->fv_dbx_md_exists = false;
     }
 }
 
