@@ -3,3 +3,9 @@ Copyright (C) 2014 The FogVault Team
 
 This product includes software developed for the FogVault project
 <http://www.fogvault.net> licensed under Apache License 2.0.
+
+This product links with QtDropbox <http://lycis.github.io/QtDropbox>,
+which is licensed under the GNU Lesser General Public License version 3.
+
+This product links with libsodium <http://libsodium.org>, which is
+licensed under the ISC license.
